@@ -1,0 +1,144 @@
+<style>
+  .card-gradient-white-r-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .card-gradient-white-r-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border-radius: 13px;
+    gap: 0;
+    background-color: #fff;
+    padding: 8px 0 20px 20px;
+    min-height: 110px;
+    margin-bottom: 8px;
+  }
+
+  /* garis pemisah antar item */
+  .card-gradient-white-r-item:not(:last-child) {
+    padding-bottom: 20px;
+  }
+
+  /* ===== Teks kiri ===== */
+  .card-gradient-white-r-teks {
+    flex: 1;
+    padding-right: 40px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .card-gradient-white-r-teks h3 {
+    margin: 0 0 8px;
+    color: #012060;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .card-gradient-white-r-teks p {
+    margin: 0 0 8px;
+    color: #000;
+    font-size: 16px;
+    line-height: 1.55;
+  }
+
+  .card-gradient-white-r-teks ul {
+    margin: 0;
+    padding: 0;
+    list-style: inside;
+  }
+
+  .card-gradient-white-r-teks li {
+    position: relative;
+    margin-bottom: 4px;
+    color: #000;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  /* ===== Gambar kanan dengan efek shadow putih menutup gambar ===== */
+  .card-gradient-white-r-gambar {
+    position: relative;
+    flex: 0 0 260px;
+    max-width: 260px;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .card-gradient-white-r-gambar-placeholder img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* fade putih yang "menutup" sisi kiri gambar, menyatu ke teks */
+  .card-gradient-white-r-gambar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      #ffffff 0%,
+      rgba(255, 255, 255, 0.85) 15%,
+      rgba(255, 255, 255, 0) 45%
+    );
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 700px) {
+    .card-gradient-white-r-item {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .card-gradient-white-r-teks {
+      padding-right: 0;
+      margin-bottom: 14px;
+    }
+
+    .card-gradient-white-r-gambar {
+      flex: 0 0 auto;
+      width: 100%;
+      max-width: 100%;
+      height: 160px;
+    }
+
+    .card-gradient-white-r-gambar::before {
+      background: linear-gradient(
+        180deg,
+        #ffffff 0%,
+        rgba(255, 255, 255, 0.85) 15%,
+        rgba(255, 255, 255, 0) 45%
+      );
+    }
+  }
+</style>
+<div class="card-gradient-white-r-list">
+  <!-- Item 1 -->
+  <div class="card-gradient-white-r-item">
+    <div class="card-gradient-white-r-teks">
+      <h3>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Laudantium,
+        animi!
+      </h3>
+    </div>
+    <div class="card-gradient-white-r-gambar">
+      <div class="card-gradient-white-r-gambar-placeholder">
+        <img
+          src="https://um.ac.id/wp-content/uploads/2026/07/1-1.webp"
+          alt=""
+          onerror="
+            this.style.display = 'none';
+            this.parentElement.textContent = 'Gambar 1';
+          "
+        />
+      </div>
+    </div>
+  </div>
+</div>

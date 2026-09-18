@@ -1,0 +1,295 @@
+<style>
+  .kategori-4-berita-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 980px) {
+    .kategori-4-berita-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  @media (max-width: 600px) {
+    .kategori-4-berita-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .kategori-4-berita-badge {
+    align-self: flex-start;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: capitalize;
+    text-align: center;
+    letter-spacing: 0.3px;
+    padding: 8px 12px;
+    margin: 22px;
+    border-radius: 999px;
+  }
+
+  .kategori-4-berita-card {
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    transition:
+      box-shadow 0.25s ease,
+      transform 0.25s ease;
+  }
+
+  .kategori-4-berita-card-link {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .kategori-4-berita-card img {
+    width: 100%;
+    height: 170px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .kategori-4-berita-date {
+    color: #012060;
+    font-size: 14px;
+    font-weight: 400;
+    margin: 0 22px;
+  }
+
+  .kategori-4-berita-title {
+    color: #012060;
+    font-weight: 600;
+    font-size: 22px;
+    line-height: 1.35;
+    margin: 22px;
+    padding: 0;
+  }
+
+  .kategori-4-berita-excerpt {
+    color: #000;
+    font-size: 16px;
+    padding: 0px;
+    font-weight: 400;
+    margin: 0px 22px;
+    flex-grow: 1;
+  }
+
+  .kategori-4-berita-btn {
+    display: inline-flex;
+    width: fit-content;
+    align-items: center;
+    gap: 12px;
+    margin: 22px 22px 36px;
+    color: #012060;
+    font-size: 16px;
+    font-weight: 600;
+    border: 1px solid #012060;
+    padding: 12px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    position: relative;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      opacity 0.2s ease,
+      transform 0.15s ease;
+  }
+  .kategori-4-berita-btn:hover {
+    background-color: #012060;
+    color: #fff;
+    border: 1px solid #012060;
+    transition: all 0.3s ease;
+  }
+  .kategori-4-berita-btn svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+  .kategori-4-berita-btn:hover svg {
+    color: #fff;
+  }
+
+  .kategori-4-berita-empty {
+    text-align: center;
+    color: #999;
+    font-size: 13px;
+    padding: 30px 18px;
+  }
+</style>
+
+<div id="kategori-4-berita-container" class="kategori-4-berita-grid">
+  <p style="text-align: center; color: #999">Memuat berita...</p>
+</div>
+
+<script>
+(function () {
+  // ============ CONFIG - EDIT DI SINI ============
+  var SITE_URL = "https://um.ac.id"; // ganti kalau domain beda
+
+  var CATEGORIES = [
+    { slug: "berita", name: "Berita", bg: "#BEE1F5", color: "#012060" },
+    { slug: "kemahasiswaan", name: "Mahasiswa & Alumni", bg: "#eafbf0", color: "#012060" },
+    { slug: "opini", name: "Opini", bg: "#FEE5A2", color: "#012060" },
+    { slug: "pengumuman", name: "Pengumuman", bg: "#FFC8AA", color: "#012060" }
+  ];
+  // =================================================
+
+  var BULAN = [
+    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+  ];
+
+  function formatTanggalIndo(isoDate) {
+    var d = new Date(isoDate);
+    return d.getDate() + " " + BULAN[d.getMonth()] + " " + d.getFullYear();
+  }
+
+  function stripHtml(html) {
+    var tmp = document.createElement("div");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || "";
+  }
+
+  function getCategoryId(slug) {
+    var url = SITE_URL + "/wp-json/wp/v2/categories?slug=" + encodeURIComponent(slug) + "&lang=id&_=" + Date.now();
+    return fetch(url, { cache: "no-store" })
+      .then(function (res) { return res.json(); })
+      .then(function (data) { return data.length > 0 ? data[0].id : null; });
+  }
+
+  function getLatestPost(catId) {
+    if (!catId) return Promise.resolve(null);
+    var url = SITE_URL + "/wp-json/wp/v2/posts?categories=" + catId + "&per_page=1&_embed&lang=id&_=" + Date.now();
+    return fetch(url, { cache: "no-store" })
+      .then(function (res) { return res.json(); })
+      .then(function (posts) { return posts.length > 0 ? posts[0] : null; });
+  }
+
+  // Bikin elemen dengan DOM API, bukan string HTML.
+  // Ini menghindari masalah tanda kutip bersarang yang rawan
+  // dirusak oleh filter wptexturize/wpautop WordPress.
+  function el(tag, className, text) {
+    var node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  }
+
+  function buildBadge(category) {
+    var badge = el("div", "kategori-4-berita-badge", category.name);
+    badge.style.background = category.bg;
+    badge.style.color = category.color;
+    return badge;
+  }
+
+  function buildTombolKategori(category) {
+    var a = document.createElement("a");
+    a.href = SITE_URL + "/kategori/" + category.slug + "/";
+    a.target = "_blank";
+    a.className = "kategori-4-berita-btn";
+    a.appendChild(document.createTextNode("Lihat Selengkapnya "));
+
+    var svgNS = "http://www.w3.org/2000/svg";
+    var svg = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("width", "13");
+    svg.setAttribute("height", "17");
+    svg.setAttribute("viewBox", "0 0 13 17");
+    svg.setAttribute("fill", "none");
+
+    var g = document.createElementNS(svgNS, "g");
+    var paths = [
+      "M3.11637 0.802671C2.17409 0.802671 1.39519 1.57215 1.55787 2.50028C1.68102 3.20295 1.88058 3.89171 2.15403 4.55399C2.64509 5.74331 3.36485 6.82395 4.27221 7.73421C5.17958 8.64447 6.25677 9.36653 7.4423 9.85916C8.09914 10.1321 8.78211 10.3317 9.47886 10.4554C10.4096 10.6206 11.1817 9.83904 11.1817 8.89375C11.1817 7.94846 10.4018 7.20459 9.49079 6.9525C9.23874 6.88275 8.99069 6.79734 8.74813 6.69654C7.9766 6.37594 7.27557 5.90603 6.68507 5.31365C6.09456 4.72126 5.62615 4.01799 5.30657 3.24399C5.20474 2.99735 5.11865 2.74507 5.04862 2.48868C4.80032 1.57971 4.05865 0.802671 3.11637 0.802671Z",
+      "M3.11637 16.9923C2.17409 16.9923 1.39519 16.2228 1.55787 15.2946C1.68102 14.592 1.88058 13.9032 2.15403 13.2409C2.64509 12.0516 3.36485 10.971 4.27221 10.0607C5.17958 9.15045 6.25677 8.42839 7.4423 7.93576C8.09914 7.66282 8.78211 7.46327 9.47886 7.33957C10.4096 7.17433 11.1817 7.95589 11.1817 8.90117C11.1817 9.84646 10.4018 10.5903 9.49079 10.8424C9.23874 10.9122 8.99069 10.9976 8.74813 11.0984C7.9766 11.419 7.27557 11.8889 6.68507 12.4813C6.09456 13.0737 5.62615 13.7769 5.30657 14.5509C5.20474 14.7976 5.11865 15.0498 5.04862 15.3062C4.80032 16.2152 4.05865 16.9923 3.11637 16.9923Z"
+    ];
+    for (var i = 0; i < paths.length; i++) {
+      var p = document.createElementNS(svgNS, "path");
+      p.setAttribute("d", paths[i]);
+      p.setAttribute("fill", "currentColor");
+      g.appendChild(p);
+    }
+    var line = document.createElementNS(svgNS, "path");
+    line.setAttribute("d", "M2.96094 2.31641L2.96094 15.3407");
+    line.setAttribute("stroke", "currentColor");
+    line.setAttribute("stroke-width", "3.04501");
+    line.setAttribute("stroke-linecap", "round");
+    g.appendChild(line);
+    svg.appendChild(g);
+    a.appendChild(svg);
+    return a;
+  }
+
+  function buildCard(post, category) {
+    var card = el("div", "kategori-4-berita-card");
+
+    if (!post) {
+      card.appendChild(buildBadge(category));
+      card.appendChild(el("div", "kategori-4-berita-empty", "Belum ada berita di kategori ini."));
+      card.appendChild(buildTombolKategori(category));
+      return card;
+    }
+
+    var title = stripHtml(post.title.rendered);
+    var excerptRaw = stripHtml(post.excerpt.rendered);
+    var excerpt = excerptRaw.length > 100 ? excerptRaw.substring(0, 100).trim() + "..." : excerptRaw;
+    var tanggal = formatTanggalIndo(post.date);
+
+    var imgUrl = "https://via.placeholder.com/400x250?text=No+Image";
+    try {
+      imgUrl = post._embedded["wp:featuredmedia"][0].source_url;
+    } catch (e) {}
+
+    var link = document.createElement("a");
+    link.href = post.link;
+    link.target = "_blank";
+    link.className = "kategori-4-berita-card-link";
+    link.setAttribute("aria-label", "Baca berita: " + title);
+
+    var img = document.createElement("img");
+    img.src = imgUrl;
+    img.alt = title;
+
+    link.appendChild(img);
+    link.appendChild(buildBadge(category));
+    link.appendChild(el("div", "kategori-4-berita-date", tanggal));
+    link.appendChild(el("h3", "kategori-4-berita-title", title));
+    link.appendChild(el("p", "kategori-4-berita-excerpt", excerpt));
+
+    card.appendChild(link);
+    card.appendChild(buildTombolKategori(category));
+    return card;
+  }
+
+  var container = document.getElementById("kategori-4-berita-container");
+
+  Promise.all(
+    CATEGORIES.map(function (cat) {
+      return getCategoryId(cat.slug).then(function (id) {
+        return getLatestPost(id);
+      });
+    })
+  )
+    .then(function (posts) {
+      container.innerHTML = "";
+      posts.forEach(function (post, i) {
+        container.appendChild(buildCard(post, CATEGORIES[i]));
+      });
+    })
+    .catch(function (err) {
+      container.innerHTML = "";
+      var errMsg = el("p", "", "Gagal memuat berita.");
+      errMsg.style.textAlign = "center";
+      errMsg.style.color = "#c00";
+      container.appendChild(errMsg);
+      console.error("Gagal fetch WP REST API:", err);
+    });
+})();
+</script>

@@ -1,0 +1,54 @@
+<div class="foto-khusus-grid">
+  <img
+    src="https://diesnatalis.um.ac.id/wp-content/uploads/2026/09/Group-1410105979.webp"
+    alt=""
+  />
+  <img
+    src="https://diesnatalis.um.ac.id/wp-content/uploads/2026/09/Group-1410106852.webp"
+    alt=""
+  />
+  <img
+    src="https://diesnatalis.um.ac.id/wp-content/uploads/2026/09/Group-1410106853.webp"
+    alt=""
+  />
+  <img
+    src="https://diesnatalis.um.ac.id/wp-content/uploads/2026/09/Group-1410106854.webp"
+    alt=""
+  />
+  <img
+    src="https://diesnatalis.um.ac.id/wp-content/uploads/2026/09/Group-1410106855.webp"
+    alt=""
+  />
+  <img
+    src="https://diesnatalis.um.ac.id/wp-content/uploads/2026/09/Group-1410106856.webp"
+    alt=""
+  />
+  <img
+    src="https://diesnatalis.um.ac.id/wp-content/uploads/2026/09/Group-1410106857.webp"
+    alt=""
+  />
+</div>
+<style>
+  .foto-khusus-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 32px;
+    min-height: 240px;
+    margin: 0 auto;
+  }
+
+  .foto-khusus-grid img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 13px;
+    display: block;
+  }
+
+  @media (max-width: 640px) {
+    .foto-khusus-grid {
+      grid-template-columns: 1fr !important;
+      gap: 12px;
+    }
+  }
+</style>

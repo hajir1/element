@@ -1,0 +1,216 @@
+.et_pb_fullwidth_menu .et-menu > li > a {
+    position: relative;
+    padding-bottom: 8px !important;
+    transition: color 0.3s ease, opacity 0.3s ease;
+    letter-spacing: 0.3px;
+}
+
+.et_pb_fullwidth_menu .et-menu > li > a::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #fff, #fff);
+    border-radius: 2px;
+    transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateX(-50%);
+}
+
+/* Netralisir panah dropdown bawaan Divi (selector Divi lebih spesifik dari
+   underline di atas untuk item yang punya submenu, jadi harus di-override
+   di sini dengan struktur & specificity yang sama) */
+.et_pb_fullwidth_menu .et-menu > li.menu-item-has-children > a::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #fff, #fff);
+    border-radius: 2px;
+    transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1), left 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateX(-50%);
+}
+
+/* Item yang punya submenu diberi ruang + panah custom sendiri (chevron kecil,
+   terpisah dari underline di atas supaya tidak pernah tabrakan lagi) */
+.et_pb_fullwidth_menu .et-menu > li.menu-item-has-children {
+    position: relative;
+    padding-right: 16px;
+}
+
+.et_pb_fullwidth_menu .et-menu > li.menu-item-has-children > a {
+    padding-right: 16px !important;
+}
+
+.et_pb_fullwidth_menu .et-menu > li.menu-item-has-children > a::before {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    width: 7px;
+    height: 7px;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: translateY(-65%) rotate(45deg);
+    transition: transform 0.25s ease;
+    pointer-events: none;
+}
+
+.et_pb_fullwidth_menu .et-menu > li.menu-item-has-children:hover > a::before {
+    transform: translateY(-35%) rotate(225deg);
+}
+
+/* Kunci lagi khusus state :hover, karena Divi punya aturan bawaan
+   ber-selector ":hover" yang spesifisitasnya lebih tinggi dan akan
+   menimpa override di atas begitu dropdown terbuka (persis saat
+   ini terlihat) — sehingga ikon panah lama Divi muncul lagi di atas teks. */
+.et_pb_fullwidth_menu .et-menu > li.menu-item-has-children:hover > a::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    top: auto;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, #fff, #fff);
+    border-radius: 2px;
+    transform: translateX(-50%);
+}
+
+/* Hover state */
+.et_pb_fullwidth_menu .et-menu > li > a:hover {
+    color: #fff !important;
+}
+
+.et_pb_fullwidth_menu .et-menu > li > a:hover::after {
+    width: 100%;
+}
+
+/* Active / current page */
+.et_pb_fullwidth_menu .et-menu > li.current-menu-item > a {
+    color: #FFFFFF !important;
+    font-weight: 600;
+}
+
+.et_pb_fullwidth_menu .et-menu > li.current-menu-item > a::after {
+    width: 100%;
+}
+
+/* Slight fade on non-hovered items when one is hovered (opsional, efek fokus) */
+.et_pb_fullwidth_menu .et-menu:hover > li > a:not(:hover) {
+    opacity: 0.75;
+}
+
+/* Smooth transition saat menu pertama load */
+.et_pb_fullwidth_menu .et-menu > li > a {
+    transition: color 0.3s ease, opacity 0.3s ease;
+}
+/* Center-kan menu items - fixed no wrap */
+.et_pb_fullwidth_menu .et-menu {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    width: 100% !important;
+    white-space: nowrap;
+}
+
+.et_pb_fullwidth_menu .et-menu > li {
+    flex-shrink: 0;
+}
+
+.et_pb_fullwidth_menu .et_pb_menu__wrap {
+    width: 100% !important;
+    overflow-x: visible;
+}
+
+/* ==================== DROPDOWN SUBMENU (DESKTOP) ==================== */
+
+/* Kotak dropdown: rounded, shadow, sedikit jarak dari menu bar, animasi halus */
+.et_pb_fullwidth_menu .et-menu li.menu-item-has-children .sub-menu {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    min-width: 190px;
+    margin: 0;
+    padding: 10px;
+    list-style: none;
+    background: #012060;
+    border-radius: 14px;
+    box-shadow: 0 18px 38px -8px rgba(1, 32, 96, 0.45);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translate(-50%, 6px);
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+    z-index: 999;
+}
+
+/* Jembatan tak kasat mata di atas dropdown supaya kursor tidak "putus"
+   saat berpindah dari menu bar ke kotak dropdown */
+.et_pb_fullwidth_menu .et-menu li.menu-item-has-children .sub-menu::before {
+    content: '';
+    position: absolute;
+    top: -14px;
+    left: 0;
+    right: 0;
+    height: 14px;
+}
+
+/* Notch segitiga kecil di atas kotak dropdown, menghubungkan visual
+   dropdown ke menu item di atasnya */
+.et_pb_fullwidth_menu .et-menu li.menu-item-has-children .sub-menu::after {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    width: 14px;
+    height: 14px;
+    background: #012060;
+    border-radius: 3px;
+    transform: translateX(-50%) rotate(45deg);
+    z-index: -1;
+}
+
+.et_pb_fullwidth_menu .et-menu li.menu-item-has-children:hover > .sub-menu {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translate(-50%, 14px);
+}
+
+.et_pb_fullwidth_menu .et-menu .sub-menu li {
+    display: block;
+    position: relative;
+}
+
+.et_pb_fullwidth_menu .et-menu .sub-menu li + li {
+    margin-top: 2px;
+}
+
+.et_pb_fullwidth_menu .et-menu .sub-menu li a {
+    display: block;
+    padding: 10px 14px 10px 18px;
+    border-radius: 9px;
+    color: #ffffff !important;
+    font-weight: 500;
+    font-size: 14px;
+    white-space: nowrap;
+    border-left: 3px solid transparent;
+    transition: background 0.2s ease, padding-left 0.2s ease, border-color 0.2s ease;
+}
+
+.et_pb_fullwidth_menu .et-menu .sub-menu li a:hover {
+    background: rgba(255, 255, 255, 0.12);
+    padding-left: 22px;
+    border-left: 3px solid #fff200;
+}
+
+/* Item current/active di dalam dropdown */
+.et_pb_fullwidth_menu .et-menu .sub-menu li.current-menu-item > a {
+    background: rgba(255, 255, 255, 0.1);
+    border-left: 3px solid #fff200;
+}

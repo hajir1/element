@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      :root {
+        --gold: #f2b705;
+        --gold-soft: #f6cf52;
+      }
+      /* body {
+          background-color: blue;
+        } */
+      /* Baris atas: 2fr 1fr — baris bawah: 1fr 1fr 1fr (otomatis lewat 3 kolom dasar) */
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+        min-height: 100px;
+      }
+
+      /* .grid .card-akademik:nth-child(1) {
+      grid-column: span 2;
+    } */
+
+      @media (max-width: 720px) {
+        .grid {
+          grid-template-columns: repeat(2, 1fr);
+          gap: 16px;
+        }
+        .grid .card-akademik:nth-child(1) {
+          grid-column: span 2;
+        }
+      }
+      @media (max-width: 460px) {
+        .grid {
+          grid-template-columns: 1fr;
+          max-width: 340px;
+          margin: 0 auto;
+        }
+        .grid .card-akademik:nth-child(1) {
+          grid-column: span 1;
+        }
+      }
+
+      .card-akademik {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        text-decoration: none;
+        border-radius: 13px;
+        background-color: #eaeae7;
+        overflow: hidden;
+        transition: all 0.3s ease;
+      }
+
+      .frame {
+        position: relative;
+        /* aspect-ratio:4/3; */
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+
+      .frame img {
+        width: 100%;
+        min-height: 202px;
+        border-top-left-radius: 13px;
+        border-top-right-radius: 13px;
+        object-fit: cover;
+        display: block;
+        transform: scale(1);
+        transition: all 0.3s ease;
+      }
+
+      /* Overlay gradient biru — terpisah dari <img> supaya bisa di-transition mulus */
+      .frame::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          180deg,
+          transparent 30%,
+          rgba(1, 32, 96, 0.35) 70%,
+          rgba(1, 32, 96, 0.75) 100%
+        );
+        opacity: 0;
+        transition: opacity 400ms ease;
+        pointer-events: none;
+      }
+
+      .card-akademik:hover .frame::after {
+        opacity: 1;
+      }
+      .card-akademik:hover .frame img {
+        transform: scale(1.1);
+        transition: all 0.3s ease;
+      }
+      /* shine sweep */
+      .shine {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          115deg,
+          transparent 40%,
+          rgba(255, 255, 255, 0.28) 50%,
+          transparent 60%
+        );
+        transform: translateX(-130%);
+        pointer-events: none;
+      }
+      /* .card-akademik:hover .shine,
+        .card-akademik:focus-visible .shine {
+          animation: sweep 950ms ease forwards;
+        } */
+      /* @keyframes sweep {
+          to {
+            transform: translateX(130%);
+          }
+        } */
+
+      /* Info: sekarang di bawah gambar, bukan overlay di atas gambar */
+      .info {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 28px 32px;
+        flex: 1;
+      }
+      .edition-tag-25 {
+        background: #ffc8aa;
+        border: 1px solid #e6b296;
+      }
+      .edition-tag-24 {
+        background: #c7dce1;
+        border: 1px solid #88b5bf;
+      }
+      .edition-tag-24-april {
+        background: #e7cff3;
+        border: 1px solid #c899e0;
+      }
+      .edition-tag-23 {
+        background: #c3da66;
+        border: 1px solid #90a831;
+      }
+      .edition-tag-next {
+        background: #d9ab92;
+        border: 1px solid #bf8768;
+      }
+
+      .edition-tag-24,
+      .edition-tag-23,
+      .edition-tag-24-april,
+      .edition-tag-next,
+      .edition-tag-25 {
+        color: #012060;
+        font-size: 16px;
+        text-transform: capitalize;
+        font-weight: bold;
+        padding: 5px 10px;
+        border-radius: 999px;
+        transition:
+          transform 420ms ease,
+          background 420ms ease,
+          color 420ms ease;
+      }
+
+      .ring-akademik {
+        position: absolute;
+        right: -36px;
+        bottom: -36px;
+        width: 72px;
+        height: 72px;
+        opacity: 0;
+        border-radius: 50%;
+        border: 10px solid #cfd8e3;
+        pointer-events: none;
+      }
+      .ring-akademik-0 {
+        position: absolute;
+        right: 0;
+        bottom: -290px;
+        width: 360px;
+        height: 360px;
+        opacity: 0;
+        border-radius: 50%;
+        border: 30px solid #cfd8e3;
+        pointer-events: none;
+      }
+      .card-akademik:hover .ring-akademik,
+      .card-akademik:hover .ring-akademik-0 {
+        opacity: 0.32;
+        transition: all 0.3s ease;
+      }
+      .card-akademik:hover {
+        background-color: #1168db;
+        transition: all 0.3s ease;
+      }
+      .card-akademik:hover .edition-tag {
+        /* background: var(--gold-soft); */
+        /* color: var(--navy-deep); */
+        border-color: transparent;
+        transform: translateY(-2px);
+      }
+
+      .title-akademik {
+        font-weight: 600;
+        font-size: 22px;
+        line-height: 1.35;
+        color: #012060;
+        margin: 0;
+        padding: 0;
+      }
+      .meta-akademik {
+        font-size: 16px;
+        color: #000;
+        margin: 0;
+        margin: 0;
+      }
+      .card-akademik:hover .title-akademik,
+      .card-akademik:hover .meta-akademik {
+        color: white;
+        transition: all 0.3s ease;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .card-akademik,
+        .frame img,
+        .shine,
+        .cta,
+        .edition-tag,
+        .corner-fold {
+          transition: none !important;
+          animation: none !important;
+        }
+        .card-akademik:hover {
+          transform: none;
+        }
+      }
+      .akademik-more {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        padding: 18px;
+        border-radius: 13px;
+        background-image: url("https://um.ac.id/wp-content/uploads/2026/07/lihat-selengkapnya-1.webp");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        overflow: hidden;
+        text-decoration: none;
+        transition: color 180ms ease;
+      }
+
+      /* overlay gelap tipis supaya teks putih tetap kebaca di atas foto */
+      .akademik-more::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        /* background: linear-gradient(
+            180deg,
+            rgba(1, 32, 96, 0.55) 0%,
+            rgba(1, 32, 96, 0.25) 60%
+          ); */
+        /* background: linear-gradient(
+            180deg,
+            white 0%,
+            white 60%
+          ); */
+        z-index: 0;
+      }
+
+      .akademik-more:hover {
+        background-image: url("https://um.ac.id/wp-content/uploads/2026/07/lihat-selengkapnya.webp");
+        transition: all 0.3s ease;
+      }
+      .akademik-view-more {
+        color: white;
+        font-size: 22px;
+      }
+      .akademik-more:hover .akademik-view-more {
+        color: #012060;
+      }
+      .akademik-more span {
+        position: relative;
+        z-index: 1;
+      }
+
+      /* lingkaran ikon panah, nempel di pojok kanan bawah kartu */
+      .akademik-more-arrow {
+        z-index: 2;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .akademik-more-arrow svg {
+        width: 22px;
+        height: 22px;
+        color: white;
+      }
+      .akademik-more:hover .akademik-more-arrow svg {
+        color: #012060;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap-akademik">
+      <div class="grid" data-akademik-grid></div>
+    </div>
+
+    <script>
+      (function () {
+        // ============================================================
+        // SUMBER DATA: cukup ubah/tambah/hapus object di array ini,
+        // grid card akan otomatis menyesuaikan lewat proses mapping
+        // di bawah — tidak perlu tulis ulang markup HTML satu per satu.
+        // ============================================================
+        var DATA_AKADEMIK = [
+          {
+            gambar:
+              "https://um.ac.id/wp-content/uploads/2026/07/1.-Praktikum-Laboratorium.webp",
+            tag: "Akademik",
+            tagClass: "edition-tag-24-april",
+            judul: "Praktikum Laboratorium",
+            deskripsi:
+              "Pembuktian teori akademis melalui pengujian saintifik dan praktik eksperimental yang terstruktur.",
+            ringClass: "ring-akademik-0",
+            href: "",
+          },
+          {
+            gambar:
+              "https://um.ac.id/wp-content/uploads/2026/07/2.-Diskusi-Kelompok.webp",
+            tag: "Akademik",
+            tagClass: "edition-tag-24",
+            judul: "Diskusi Kelompok",
+            deskripsi:
+              "Membangun pemikiran kritis dan kemampuan kerja sama tim melalui diskusi terarah.",
+            ringClass: "ring-akademik",
+            href: "",
+          },
+          {
+            gambar:
+              "https://um.ac.id/wp-content/uploads/2026/07/3.-Penelitian-Bersama.webp",
+            tag: "Akademik",
+            tagClass: "edition-tag-24-april",
+            judul: "Penelitian Bersama",
+            deskripsi:
+              "Kolaborasi penelitian berbasis akademis untuk pengembangan ilmu pengetahuan dan teknologi.",
+            ringClass: "ring-akademik",
+            href: "",
+          },
+        ];
+
+        // Dibangun dari kode karakter (bukan literal "&amp;" dkk.) supaya
+        // aman disimpan lewat editor Divi — lihat catatan di card berita.
+        function escapeHtml(str) {
+          var AMP = String.fromCharCode(38);
+          var LT = String.fromCharCode(60);
+          var GT = String.fromCharCode(62);
+          var QUOT = String.fromCharCode(34);
+
+          return String(str)
+            .split(AMP)
+            .join(AMP + "amp;")
+            .split(LT)
+            .join(AMP + "lt;")
+            .split(GT)
+            .join(AMP + "gt;")
+            .split(QUOT)
+            .join(AMP + "quot;");
+        }
+
+        // Satu fungsi "template" yang menerjemahkan SATU object data
+        // menjadi SATU potong markup card. Dipanggil berulang oleh
+        // .map() di bawah, bukan ditulis manual per card.
+        function renderCard(item) {
+          var tag = item.href
+            ? "a"
+            : "div"; /* pakai <a> otomatis kalau href diisi */
+          var hrefAttr = item.href
+            ? ' href="' + escapeHtml(item.href) + '"'
+            : "";
+
+          return (
+            "<" +
+            tag +
+            ' class="card-akademik"' +
+            hrefAttr +
+            (item.href ? ' rel="noopener"' : "") +
+            ">" +
+            '<div class="frame">' +
+            '<img src="' +
+            escapeHtml(item.gambar) +
+            '" alt="' +
+            escapeHtml(item.judul) +
+            '" />' +
+            '<span class="shine" aria-hidden="true"></span>' +
+            "</div>" +
+            '<div class="info">' +
+            '<span class="' +
+            escapeHtml(item.tagClass) +
+            '">' +
+            escapeHtml(item.tag) +
+            "</span>" +
+            '<p class="title-akademik">' +
+            escapeHtml(item.judul) +
+            "</p>" +
+            '<p class="meta-akademik">' +
+            escapeHtml(item.deskripsi) +
+            "</p>" +
+            '<span class="' +
+            escapeHtml(item.ringClass) +
+            '" aria-hidden="true"></span>' +
+            "</div>" +
+            "</" +
+            tag +
+            ">"
+          );
+        }
+
+        function render() {
+          var grids = document.querySelectorAll("[data-akademik-grid]");
+          if (!grids.length) return;
+
+          // Inilah bagian "mapping": setiap object di DATA_AKADEMIK
+          // diubah jadi markup card lewat renderCard(), lalu semua
+          // hasilnya digabung jadi satu string HTML.
+          var html = DATA_AKADEMIK.map(renderCard).join("");
+
+          grids.forEach(function (grid) {
+            grid.innerHTML = html;
+          });
+        }
+
+        if (document.readyState === "loading") {
+          document.addEventListener("DOMContentLoaded", render);
+        } else {
+          render();
+        }
+      })();
+    </script>
+  </body>
+</html>

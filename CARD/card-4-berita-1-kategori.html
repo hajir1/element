@@ -1,0 +1,254 @@
+<!--
+  PENTING: Paste kode ini ke modul "Code" di Divi (BUKAN modul "Text").
+  Modul Text akan membuang tag <script> saat disimpan sehingga widget
+  akan macet selamanya di "Memuat berita...".
+-->
+<style>
+  .kategori-1-berita-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 44px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: 760px) {
+    .kategori-1-berita-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 460px) {
+    .kategori-1-berita-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .kategori-1-berita-item {
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    border: 1px solid #eaeae7;
+    padding: 4px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    background-color: #fff;
+    border-radius: 13px;
+    overflow: hidden;
+  }
+
+  .kategori-1-berita-item img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    border-top-right-radius: 13px;
+    border-top-left-radius: 13px;
+    display: block;
+    background-color: #f2f2f2;
+  }
+
+  .kategori-1-berita-date {
+    color: #000;
+    font-size: 14px;
+    padding: 0 30px 30px;
+  }
+
+  .kategori-1-berita-title {
+    padding: 30px;
+    color: #012060;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.45;
+    margin: 0;
+  }
+
+  .kategori-1-berita-loading,
+  .kategori-1-berita-empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    color: #000;
+    font-size: 16px;
+    padding: 40px 0;
+  }
+</style>
+
+<div class="kategori-1-berita-grid" data-kategori-1-berita>
+  <div class="kategori-1-berita-loading">Memuat berita&hellip;</div>
+</div>
+
+<script>
+  (function () {
+    var BASE = "https://um.ac.id/wp-json/wp/v2";
+    var SLUG_KATEGORI = "kampus-berdampak";
+    var JUMLAH_BERITA = 2;
+    var TIMEOUT_MS = 12000; // 12 detik, biar tidak macet selamanya kalau API lambat/mati
+
+    var BULAN = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "Mei",
+      "Jun",
+      "Jul",
+      "Agu",
+      "Sep",
+      "Okt",
+      "Nov",
+      "Des",
+    ];
+
+    function formatTanggal(isoString) {
+      var d = new Date(isoString);
+      return BULAN[d.getMonth()] + " " + d.getDate() + ", " + d.getFullYear();
+    }
+
+    // Dibangun dari kode karakter (bukan ditulis literal "&amp;" dkk.)
+    // supaya tidak ada teks yang MIRIP HTML entity di source code ini.
+    // Kalau ditulis literal, WordPress/Divi kadang men-decode entity itu
+    // saat disimpan (mis. "&amp;" jadi "&", '"' jadi karakter kutip asli)
+    // dan itu merusak syntax JavaScript-nya.
+    function escapeHtml(str) {
+      var AMP = String.fromCharCode(38); // &
+      var LT = String.fromCharCode(60); // <
+      var GT = String.fromCharCode(62); // >
+      var QUOT = String.fromCharCode(34); // "
+      var APOS = String.fromCharCode(39); // '
+
+      return String(str)
+        .split(AMP)
+        .join(AMP + "amp;")
+        .split(LT)
+        .join(AMP + "lt;")
+        .split(GT)
+        .join(AMP + "gt;")
+        .split(APOS)
+        .join(AMP + "#39;")
+        .split(QUOT)
+        .join(AMP + "quot;");
+    }
+
+    function fetchWithTimeout(url, ms) {
+      var controller = new AbortController();
+      var timer = setTimeout(function () {
+        controller.abort();
+      }, ms);
+
+      return fetch(url, { signal: controller.signal, mode: "cors" }).finally(
+        function () {
+          clearTimeout(timer);
+        },
+      );
+    }
+
+    function initBerita(grid) {
+      // Cari elemen sekali lagi setiap kali dipanggil, jaga-jaga kalau
+      // Divi merender ulang / mendup dom setelah script pertama jalan.
+      fetchWithTimeout(BASE + "/categories?slug=" + SLUG_KATEGORI, TIMEOUT_MS)
+        .then(function (catRes) {
+          if (!catRes.ok)
+            throw new Error("Gagal ambil kategori (" + catRes.status + ")");
+          return catRes.json();
+        })
+        .then(function (kategori) {
+          if (!kategori.length) {
+            grid.innerHTML =
+              '<div class="kategori-1-berita-empty">Kategori tidak ditemukan.</div>';
+            return null;
+          }
+
+          var catId = kategori[0].id;
+          var url =
+            BASE +
+            "/posts?categories=" +
+            catId +
+            "&per_page=" +
+            JUMLAH_BERITA +
+            "&_embed";
+
+          return fetchWithTimeout(url, TIMEOUT_MS).then(function (postRes) {
+            if (!postRes.ok)
+              throw new Error("Gagal ambil berita (" + postRes.status + ")");
+            return postRes.json();
+          });
+        })
+        .then(function (posts) {
+          if (posts === null) return;
+
+          if (!posts || !posts.length) {
+            grid.innerHTML =
+              '<div class="kategori-1-berita-empty">Belum ada berita.</div>';
+            return;
+          }
+
+          var html = posts
+            .map(function (post) {
+              var embedded = post._embedded || {};
+              var media = embedded["wp:featuredmedia"] || [];
+              var gambar = (media[0] && media[0].source_url) || "";
+              var judul = (post.title && post.title.rendered) || "";
+              var tanggal = formatTanggal(post.date);
+
+              return (
+                '<a class="kategori-1-berita-item" href="' +
+                post.link +
+                '" target="_blank" rel="noopener">' +
+                '<img src="' +
+                gambar +
+                '" alt="' +
+                escapeHtml(judul) +
+                '" loading="lazy" />' +
+                '<h3 class="kategori-1-berita-title">' +
+                judul +
+                "</h3>" +
+                '<span class="kategori-1-berita-date">' +
+                tanggal +
+                "</span>" +
+                "</a>"
+              );
+            })
+            .join("");
+
+          grid.innerHTML = html;
+        })
+        .catch(function (err) {
+          var pesan = "Gagal memuat berita. Coba refresh halaman.";
+          if (err && err.name === "AbortError") {
+            pesan =
+              "Waktu tunggu habis saat memuat berita. Coba refresh halaman.";
+          }
+          grid.innerHTML =
+            '<div class="kategori-1-berita-empty">' + pesan + "</div>";
+          // Buka console (F12) untuk lihat detail error aslinya:
+          console.error("[kategori-1-berita]", err);
+        });
+    }
+
+    function loadBerita() {
+      // Ambil SEMUA elemen dengan atribut ini, bukan cuma satu ID.
+      // Ini mengantisipasi Divi yang kadang menduplikasi markup module
+      // (mis. untuk versi desktop/tablet/phone) sehingga id yang sama
+      // muncul lebih dari sekali di halaman.
+      var grids = document.querySelectorAll("[data-kategori-1-berita]");
+      if (!grids.length) {
+        console.warn(
+          "[kategori-1-berita] elemen grid tidak ditemukan di halaman.",
+        );
+        return;
+      }
+      grids.forEach(function (grid) {
+        // Hindari inisialisasi ganda pada elemen yang sama.
+        if (grid.getAttribute("data-kategori-1-berita-init") === "1") return;
+        grid.setAttribute("data-kategori-1-berita-init", "1");
+        initBerita(grid);
+      });
+    }
+
+    // Jalankan setelah DOM siap. Ini penting kalau script sempat
+    // di-inject lebih awal dari elemen div-nya oleh Divi.
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", loadBerita);
+    } else {
+      loadBerita();
+    }
+  })();
+</script>
