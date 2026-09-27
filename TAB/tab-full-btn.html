@@ -1,0 +1,1919 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <style>
+      /* Layout */
+      .tab-full-btn-wrapper {
+        display: flex;
+        gap: 28px;
+      }
+
+      /* Sidebar */
+      .tab-full-btn-sidebar {
+        width: 260px;
+        flex-shrink: 0;
+        padding: 8px;
+        background: #fff;
+      }
+      .tab-full-btn-sidebar-title {
+        font-size: 16px;
+        padding-left: 22px;
+        letter-spacing: 0.14em;
+        color: #000;
+        margin-bottom: 14px;
+        font-weight: 500;
+      }
+
+      .tab-full-btn-btn {
+        display: flex;
+        align-items: center;
+        padding: 8px 12px;
+        border-radius: 4px;
+        margin-bottom: 6px;
+        cursor: pointer;
+        color: #012060;
+        font-size: 16px;
+        transition: 0.3s;
+      }
+      .tab-full-btn-btn:hover {
+        background: #cfd4df;
+        color: #012060;
+      }
+      input {
+        display: none;
+      }
+
+      /* ACTIVE */
+      #tab1:checked ~ .tab-full-btn-wrapper .btn1,
+      #tab2:checked ~ .tab-full-btn-wrapper .btn2,
+      #tab3:checked ~ .tab-full-btn-wrapper .btn3,
+      #tab4:checked ~ .tab-full-btn-wrapper .btn4,
+      #tab5:checked ~ .tab-full-btn-wrapper .btn5,
+      #tab6:checked ~ .tab-full-btn-wrapper .btn6,
+      #tab7:checked ~ .tab-full-btn-wrapper .btn7,
+      #tab8:checked ~ .tab-full-btn-wrapper .btn8,
+      #tab9:checked ~ .tab-full-btn-wrapper .btn9,
+      #tab10:checked ~ .tab-full-btn-wrapper .btn10,
+      #tab11:checked ~ .tab-full-btn-wrapper .btn11 {
+        background: #012060;
+        border-color: #012060;
+        font-weight: 700;
+        color: #fff;
+        font-size: 16px;
+      }
+
+      /* Tabs */
+      .tab-full-btn-content {
+        flex: 1;
+      }
+      .tab-full-btn-tab {
+        display: none;
+      }
+
+      #tab1:checked ~ .tab-full-btn-wrapper #c1,
+      #tab2:checked ~ .tab-full-btn-wrapper #c2,
+      #tab3:checked ~ .tab-full-btn-wrapper #c3,
+      #tab4:checked ~ .tab-full-btn-wrapper #c4,
+      #tab5:checked ~ .tab-full-btn-wrapper #c5,
+      #tab6:checked ~ .tab-full-btn-wrapper #c6,
+      #tab7:checked ~ .tab-full-btn-wrapper #c7,
+      #tab8:checked ~ .tab-full-btn-wrapper #c8,
+      #tab9:checked ~ .tab-full-btn-wrapper #c9,
+      #tab10:checked ~ .tab-full-btn-wrapper #c10,
+      #tab11:checked ~ .tab-full-btn-wrapper #c11 {
+        display: block;
+      }
+
+      /* Hero */
+      .tab-full-btn-hero {
+        position: relative;
+        border-radius: 13px;
+        overflow: hidden;
+        margin-bottom: 36px;
+      }
+      .tab-full-btn-hero img {
+        width: 100%;
+        object-fit: cover;
+        display: block;
+      }
+      .tab-full-btn-hero-title {
+        color: #012060;
+        font-size: 24px;
+        font-weight: 700;
+        margin: 14px 0 20px;
+      }
+
+      /* Card */
+      .tab-full-btn-card {
+        background: #fff;
+        border-radius: 13px;
+        padding: 26px;
+        margin-bottom: 36px;
+      }
+      .tab-full-btn-label {
+        display: inline-block;
+        font-size: 16px;
+        font-weight: 700;
+        padding: 6px 14px;
+        border-top-right-radius: 999px;
+        border-bottom-right-radius: 999px;
+        border-bottom-left-radius: 999px;
+        margin-bottom: 12px;
+        color: #012060;
+      }
+      .tab-full-btn-title {
+        font-size: 22px;
+        font-weight: 700;
+        color: #012060;
+        margin-bottom: 12px;
+      }
+      .tab-full-btn-body {
+        font-size: 16px;
+        font-weight: 500;
+        margin-top: 22px;
+        line-height: 1.75;
+        color: #000;
+      }
+      .tab-full-btn-divider {
+        display: none;
+      }
+      .tab-full-btn-body ul {
+        margin: 0;
+        list-style: none;
+        padding: 0;
+      }
+      .tab-full-btn-body li {
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .tab-full-btn-body li svg {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        color: #fff;
+      }
+
+      /* ===== Item dokumen (dirender dari object JS) ===== */
+      .tab-full-btn-doc-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+      .tab-full-btn-doc-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 10px 0;
+        border-bottom: 1px solid #e6e9f0;
+      }
+      .tab-full-btn-doc-item:last-child {
+        border-bottom: none;
+      }
+      .tab-full-btn-doc-name {
+        color: #000;
+        font-size: 16px;
+        line-height: 1.5;
+      }
+      .tab-full-btn-doc-name .tab-full-btn-doc-no {
+        color: #012060;
+        font-weight: 700;
+        margin-right: 6px;
+      }
+      .cta-sakip.is-disabled {
+        background-color: #cfd4df;
+        border-color: #cfd4df;
+        color: #6b7280;
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+
+      /* Warna badge per jenis section (urutan tetap: Tentang, Arah & Tujuan, Komitmen, Masa Depan) */
+      /* .tab-full-btn-tab > .tab-full-btn-card:nth-of-type(2) .tab-full-btn-label {
+        background: #ffe3cf;
+        border: 1px solid #eab48a;
+      }
+      .tab-full-btn-tab > .tab-full-btn-card:nth-of-type(3) .tab-full-btn-label {
+        background: #d2edbd;
+        border: 1px solid #bcff88;
+      }
+      .tab-full-btn-tab > .tab-full-btn-card:nth-of-type(4) .tab-full-btn-label {
+        background: #f5e9cc;
+        border: 1px solid #e8d19a;
+      }
+      .tab-full-btn-tab > .tab-full-btn-card:nth-of-type(5) {
+        border-left: 4px solid #1168db;
+      }
+      .tab-full-btn-tab > .tab-full-btn-card:nth-of-type(5) .tab-full-btn-label {
+        background: #bee1f5;
+        border: 1px solid #74cdff;
+      } */
+
+      /* CTA */
+      .tab-full-btn-cta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        border-left: 4px solid #1168db;
+      }
+      .tab-full-btn-cta strong {
+        color: #012060;
+      }
+      .tab-full-btn-btn-more {
+        display: inline-flex;
+        align-items: center;
+        background: #012060;
+        padding: 12px 24px;
+        border-radius: 999px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 16px;
+        color: #fff;
+        white-space: nowrap;
+        transition: all 0.3s ease;
+      }
+      .tab-full-btn-btn-more:hover {
+        background: #1168db;
+      }
+      .icon-dibagian-sidebar-link {
+        width: 22px;
+        height: 22px;
+        flex-shrink: 0;
+      }
+      .y-badge {
+        display: inline-block;
+        font-size: 16px;
+        font-weight: 700;
+        text-transform: capitalize;
+        padding: 8px 12px;
+        border-radius: 999px;
+        white-space: nowrap;
+        color: #012060;
+      }
+
+      .y-badge-green {
+        background: #d3edbc;
+        border: 1px solid #94ad7e;
+      }
+      .y-badge-red {
+        background: #ffd0ca;
+        border: 1px solid #ff9f93;
+      }
+      .y-badge-orange {
+        background: #ffc8aa;
+        border: 1px solid #e6b296;
+      }
+      .y-badge-purple {
+        background: #e7cff3;
+        border: 1px solid #a79aad;
+      }
+      .y-badge-yellow {
+        background: #fee69d;
+        border: 1px solid #b09e6a;
+      }
+
+      .y-badge-blue {
+        background: #bee1f4;
+        border: 1px solid #8fa6b3;
+      }
+
+      .y-badge-pink {
+        background: #ffdbe9;
+        border: 1px solid #f0a8c4;
+      }
+
+      .card-bawah-item {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 0;
+        border-radius: 18px;
+        /* padding: 26px; */
+        background-color: #fff;
+        min-height: 110px;
+      }
+
+      .cta-sakip {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        color: #fff;
+        background-color: #012060;
+        font-size: 16px;
+        font-weight: 600;
+        border: 1px solid #012060;
+        padding: 12px 20px;
+        margin-left: 26px;
+        border-radius: 4px;
+        cursor: pointer;
+        position: relative;
+        text-decoration: none;
+        white-space: nowrap;
+        transition:
+          opacity 0.2s ease,
+          transform 0.15s ease;
+      }
+      .cta-sakip:hover {
+        background-color: #cfd4df;
+        color: #012060;
+        border: none;
+        border: 1px solid #cfd4df;
+        transition: all 0.3s ease;
+      }
+      .cta-sakip svg {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        margin-left: auto;
+      }
+      .cta-sakip:hover svg {
+        color: #012060;
+      }
+
+      /* ===== Responsive: tablet (sidebar tetap di samping, tapi lebih ringkas) ===== */
+      @media (max-width: 992px) {
+        .tab-full-btn-wrapper {
+          gap: 18px;
+        }
+        .tab-full-btn-sidebar {
+          width: 210px;
+        }
+        .tab-full-btn-hero-title {
+          font-size: 21px;
+        }
+        .tab-full-btn-card {
+          padding: 20px;
+        }
+      }
+
+      /* ===== Responsive: sidebar pindah ke atas saat layar HP ===== */
+      @media (max-width: 768px) {
+        .tab-full-btn-wrapper {
+          flex-direction: column;
+          gap: 20px;
+        }
+
+        .tab-full-btn-sidebar {
+          width: 100%;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+        }
+
+        .tab-full-btn-sidebar-title {
+          flex-basis: 100%;
+          padding-left: 4px;
+          margin-bottom: 6px;
+        }
+
+        .tab-full-btn-btn {
+          margin-bottom: 0;
+          padding: 8px 14px;
+          font-size: 14px;
+          flex: 1 1 calc(50% - 8px);
+          justify-content: center;
+          white-space: nowrap;
+        }
+
+        .icon-dibagian-sidebar-link {
+          width: 18px;
+          height: 18px;
+        }
+
+        .tab-full-btn-card {
+          padding: 18px;
+        }
+
+        .tab-full-btn-hero-title {
+          font-size: 18px;
+        }
+
+        .tab-full-btn-title {
+          font-size: 19px;
+        }
+
+        .tab-full-btn-label,
+        .tab-full-btn-body {
+          font-size: 15px;
+        }
+
+        /* Item dokumen: nama dan tombol ditumpuk supaya judul panjang
+           tidak berdesakan dengan tombol "Buka Dokumen" */
+        .tab-full-btn-doc-item {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+        }
+
+        .tab-full-btn-doc-name {
+          font-size: 15px;
+        }
+
+        .cta-sakip {
+          margin-left: 0;
+          width: 100%;
+          justify-content: center;
+        }
+      }
+
+      /* Layar sangat kecil: jadikan daftar fakultas scroll horizontal
+         supaya tidak terlalu banyak baris yang wrap */
+      @media (max-width: 480px) {
+        .tab-full-btn-sidebar {
+          flex-wrap: nowrap;
+          overflow-x: auto;
+          -webkit-overflow-scrolling: touch;
+          padding-bottom: 6px;
+        }
+
+        .tab-full-btn-sidebar-title {
+          flex-basis: auto;
+          width: 100%;
+        }
+
+        .tab-full-btn-btn {
+          flex: 0 0 auto;
+          white-space: nowrap;
+        }
+
+        .tab-full-btn-card {
+          padding: 14px;
+        }
+
+        .tab-full-btn-title {
+          font-size: 17px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ============================================================
+         SPRITE ICON: semua icon didefinisikan SEKALI di sini,
+         lalu dipakai berkali-kali lewat <use href="#id">.
+         Tambah icon baru? Cukup tambah <symbol> baru di bawah ini.
+         ============================================================ -->
+    <svg style="display: none" aria-hidden="true">
+      <symbol id="icon-fak" viewBox="0 0 235 235">
+        <path
+          d="M117.067 64.3561C110.881 64.3561 105.767 69.4079 106.835 75.5012C107.644 80.1143 108.954 84.6361 110.749 88.9841C113.973 96.7921 118.698 103.887 124.655 109.863C130.612 115.839 137.684 120.579 145.467 123.813C149.78 125.605 154.263 126.915 158.838 127.727C164.948 128.812 170.017 123.681 170.017 117.475C170.017 111.269 164.897 106.386 158.916 104.731C157.261 104.273 155.633 103.712 154.04 103.05C148.975 100.946 144.373 97.8605 140.496 93.9714C136.619 90.0822 133.544 85.4651 131.446 80.3838C130.777 78.7645 130.212 77.1083 129.752 75.425C128.122 69.4574 123.253 64.3561 117.067 64.3561Z"
+          fill="currentColor"
+          fill-opacity="0.2"
+        />
+        <path
+          d="M117.067 170.644C110.881 170.644 105.767 165.592 106.835 159.499C107.644 154.886 108.954 150.364 110.749 146.016C113.973 138.208 118.698 131.113 124.655 125.137C130.612 119.161 137.684 114.421 145.467 111.187C149.78 109.395 154.263 108.085 158.838 107.273C164.948 106.188 170.017 111.319 170.017 117.525C170.017 123.731 164.897 128.614 158.916 130.269C157.261 130.727 155.633 131.288 154.04 131.95C148.975 134.054 144.373 137.14 140.496 141.029C136.619 144.918 133.544 149.535 131.446 154.616C130.777 156.235 130.212 157.892 129.752 159.575C128.122 165.543 123.253 170.644 117.067 170.644Z"
+          fill="currentColor"
+          fill-opacity="0.2"
+        />
+        <path
+          d="M117.101 64.3561C123.287 64.3561 128.401 69.4079 127.333 75.5012C126.524 80.1143 125.214 84.6361 123.419 88.9841C120.195 96.7921 115.47 103.887 109.513 109.863C103.556 115.839 96.4839 120.579 88.7007 123.813C84.3884 125.605 79.9047 126.915 75.3304 127.727C69.2199 128.812 64.1511 123.681 64.1511 117.475C64.1511 111.269 69.2709 106.386 75.2521 104.731C76.9068 104.273 78.5352 103.712 80.1277 103.05C85.1929 100.946 89.7953 97.8605 93.6721 93.9714C97.5488 90.0822 100.624 85.4651 102.722 80.3838C103.391 78.7645 103.956 77.1083 104.416 75.425C106.046 69.4574 110.915 64.3561 117.101 64.3561Z"
+          fill="currentColor"
+          fill-opacity="0.2"
+        />
+        <path
+          d="M117.101 170.636C123.287 170.636 128.401 165.584 127.333 159.491C126.524 154.878 125.214 150.356 123.419 146.008C120.195 138.2 115.47 131.105 109.513 125.129C103.556 119.153 96.4839 114.413 88.7007 111.179C84.3884 109.387 79.9047 108.077 75.3304 107.265C69.2199 106.18 64.1511 111.311 64.1511 117.517C64.1511 123.723 69.2709 128.606 75.2521 130.262C76.9068 130.719 78.5352 131.28 80.1277 131.942C85.1929 134.047 89.7953 137.132 93.6721 141.021C97.5488 144.91 100.624 149.527 102.722 154.608C103.391 156.228 103.956 157.884 104.416 159.567C106.046 165.535 110.915 170.636 117.101 170.636Z"
+          fill="currentColor"
+          fill-opacity="0.2"
+        />
+      </symbol>
+
+      <symbol id="icon-arrow" viewBox="0 0 13 17">
+        <path
+          d="M3.11637 0.802671C2.17409 0.802671 1.39519 1.57215 1.55787 2.50028C1.68102 3.20295 1.88058 3.89171 2.15403 4.55399C2.64509 5.74331 3.36485 6.82395 4.27221 7.73421C5.17958 8.64447 6.25677 9.36653 7.4423 9.85916C8.09914 10.1321 8.78211 10.3317 9.47886 10.4554C10.4096 10.6206 11.1817 9.83904 11.1817 8.89375C11.1817 7.94846 10.4018 7.20459 9.49079 6.9525C9.23874 6.88275 8.99069 6.79734 8.74813 6.69654C7.9766 6.37594 7.27557 5.90603 6.68507 5.31365C6.09456 4.72126 5.62615 4.01799 5.30657 3.24399C5.20474 2.99735 5.11865 2.74507 5.04862 2.48868C4.80032 1.57971 4.05865 0.802671 3.11637 0.802671Z"
+          fill="currentColor"
+        />
+        <path
+          d="M3.11637 16.9923C2.17409 16.9923 1.39519 16.2228 1.55787 15.2946C1.68102 14.592 1.88058 13.9032 2.15403 13.2409C2.64509 12.0516 3.36485 10.971 4.27221 10.0607C5.17958 9.15045 6.25677 8.42839 7.4423 7.93576C8.09914 7.66282 8.78211 7.46327 9.47886 7.33957C10.4096 7.17433 11.1817 7.95589 11.1817 8.90117C11.1817 9.84646 10.4018 10.5903 9.49079 10.8424C9.23874 10.9122 8.99069 10.9976 8.74813 11.0984C7.9766 11.419 7.27557 11.8889 6.68507 12.4813C6.09456 13.0737 5.62615 13.7769 5.30657 14.5509C5.20474 14.7976 5.11865 15.0498 5.04862 15.3062C4.80032 16.2152 4.05865 16.9923 3.11637 16.9923Z"
+          fill="currentColor"
+        />
+        <path
+          d="M2.96094 2.31641L2.96094 15.3407"
+          stroke="currentColor"
+          stroke-width="3.04501"
+          stroke-linecap="round"
+        />
+      </symbol>
+    </svg>
+
+    <div id="tab-full-btn-root">
+      <input type="radio" name="tab" id="tab1" checked />
+      <input type="radio" name="tab" id="tab2" />
+      <input type="radio" name="tab" id="tab3" />
+      <input type="radio" name="tab" id="tab4" />
+
+      <div class="tab-full-btn-wrapper">
+        <div class="tab-full-btn-sidebar">
+          <div class="tab-full-btn-sidebar-title">SAKIP UM</div>
+
+          <label for="tab1" class="tab-full-btn-btn btn1"
+            ><svg class="icon-dibagian-sidebar-link" width="22" height="22">
+              <use href="#icon-fak"></use></svg
+            >SAKIP</label
+          >
+          <label for="tab2" class="tab-full-btn-btn btn2"
+            ><svg class="icon-dibagian-sidebar-link" width="22" height="22">
+              <use href="#icon-fak"></use></svg
+            >Perjanjian Kinerja</label
+          >
+          <label for="tab3" class="tab-full-btn-btn btn3"
+            ><svg class="icon-dibagian-sidebar-link" width="22" height="22">
+              <use href="#icon-fak"></use></svg
+            >Reintrabis UM</label
+          >
+          <label for="tab4" class="tab-full-btn-btn btn4"
+            ><svg class="icon-dibagian-sidebar-link" width="22" height="22">
+              <use href="#icon-fak"></use></svg
+            >Lakin UM</label
+          >
+        </div>
+
+        <div class="tab-full-btn-content">
+          <!-- ================= FIP ================= -->
+          <div id="c1" class="tab-full-btn-tab"></div>
+
+          <!-- ================= FS ================= -->
+          <div id="c2" class="tab-full-btn-tab"></div>
+
+          <div id="c3" class="tab-full-btn-tab"></div>
+
+          <div id="c4" class="tab-full-btn-tab"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      const sakipGroups = [
+        {
+          title: "PK Rektor & Regulasi Terkait",
+          col1: "",
+          col2: "Nama Dokumen",
+          rows: [
+            [
+              "",
+              "PK Rektor dengan Ditjen Pendidikan Tinggi Tahun 2025",
+              "https://drive.google.com/file/d/18FtsV6fVs3a28RfThNHU2DCjnvxdgRRP/view?usp=sharing",
+            ],
+            [
+              "",
+              "Salinan Pertor Nomor 46 Tahun 2025 tentang Pemberian Penghargaan Fakultas Berkinerja Terbaik UM",
+              "https://drive.google.com/file/d/19LVlU8vZ4ncv1HZo5T0HjnNTpNY4IJjE/view?usp=sharing",
+            ],
+          ],
+        },
+        {
+          title: "Pohon Kinerja UM",
+          col1: "Tahun",
+          col2: "Dokumen",
+          rows: [
+            [
+              "2025",
+              "Pohon Kinerja UM 2025",
+              "https://drive.google.com/file/d/1EVg8a3TJhD9WP426pazxLObYPfUHYlTY/preview",
+            ],
+            [
+              "2024",
+              "Pohon Kinerja UM 2024",
+              "https://drive.google.com/file/d/1kEIhxpiPyJacxYlSXsMx-TZMTPz13gnr/preview",
+            ],
+          ],
+        },
+        {
+          title: "Rencana Aksi",
+          col1: "Tahun",
+          col2: "Dokumen",
+          rows: [
+            [
+              "2024",
+              "Rencana Aksi 2024",
+              "https://ppdh.um.ac.id/download/22989763/?tmstv=1787542708",
+            ],
+            [
+              "2023",
+              "Rencana Aksi 2023",
+              "https://drive.google.com/file/d/1XyoodHPM_oLJWdPewgFIxa6c9c4p3LlJ/preview",
+            ],
+            [
+              "2022",
+              "Rencana Aksi 2022",
+              "https://drive.google.com/file/d/1MCs7RQToHFbuXTa2VNjBITBe0bFdk8oa/preview",
+            ],
+            [
+              "2021",
+              "Rencana Aksi 2021",
+              "https://drive.google.com/file/d/1OdfZr9XXvPZUj88KAA62Bk4bh9B_xCR4/preview",
+            ],
+          ],
+        },
+        {
+          title: "Definisi Operasional Rubrik Indikator Kinerja",
+          col1: "Tahun",
+          col2: "Dokumen",
+          rows: [
+            [
+              "2025",
+              "Definisi Operasional Rubrik Indikator Kinerja 2025",
+              "https://drive.google.com/file/d/1RipmxSK3WEjOO1nhgeR4IVD8AmZFqgfI/preview",
+            ],
+            [
+              "2024",
+              "Definisi Operasional Rubrik Indikator Kinerja 2024",
+              "https://drive.google.com/file/d/1pCZeLhaHxL2qD_nT-I627yMWplIlpuYP/preview",
+            ],
+          ],
+        },
+        {
+          title: "Laporan Triwulan",
+          col1: "Periode",
+          col2: "Dokumen",
+          rows: [
+            [
+              "2025 · TW I",
+              "Laporan Triwulan I 2025",
+              "https://ppdh.um.ac.id/wp-content/uploads/2025/10/tw-1-revisi.pdf",
+            ],
+            [
+              "2024 · TW II",
+              "Laporan Triwulan II 2024",
+              "https://diphk.um.ac.id/wp-content/uploads/2024/10/Laporan-TW2-2024.pdf",
+            ],
+            [
+              "2024 · TW I",
+              "Laporan Triwulan I 2024",
+              "https://diphk.um.ac.id/wp-content/uploads/2024/10/Laporan-TW1-2024.pdf",
+            ],
+            [
+              "2023 · TW IV",
+              "Laporan Triwulan IV 2023",
+              "https://drive.google.com/file/d/117eMsqeXvLq1JlMdfjg76GjREsaaZzhw/preview",
+            ],
+            [
+              "2023 · TW III",
+              "Laporan Triwulan III 2023",
+              "https://drive.google.com/file/d/1scILoMqhG_QcLvc8V56m_CkwpyOiPYmL/preview",
+            ],
+            [
+              "2023 · TW II",
+              "Laporan Triwulan II 2023",
+              "https://drive.google.com/file/d/1xDGPi34AwXuHlf69jl-htPwJ40Lbwqvi/preview",
+            ],
+            [
+              "2023 · TW I",
+              "Laporan Triwulan I 2023",
+              "https://drive.google.com/file/d/1RIWUcrTehOKu5x0uJDr6-Lp024N82S5T/preview",
+            ],
+          ],
+        },
+        {
+          title: "Tindak Lanjut Hasil Evaluasi",
+          col1: "Tahun",
+          col2: "Dokumen",
+          rows: [
+            [
+              "2023",
+              "Tindak Lanjut Hasil Evaluasi (TTE) 2023",
+              "https://ppdh.um.ac.id/wp-content/uploads/2024/07/TTE_tindak-lanjut-LHE_690535-Tahun-2023-Maret-2024.pdf",
+            ],
+            [
+              "2023",
+              "Tindak Lanjut Hasil Evaluasi 2023 (alternatif)",
+              "https://ppdh.um.ac.id/download/22989766/?tmstv=1787542708",
+            ],
+          ],
+        },
+        {
+          title: "Hasil Evaluasi Akuntabilitas Kinerja",
+          col1: "Tahun",
+          col2: "Dokumen",
+          rows: [
+            [
+              "2024",
+              "Hasil Evaluasi Akuntabilitas Kinerja 2024",
+              "https://ppdh.um.ac.id/wp-content/uploads/2024/12/tte_lhereviu_690535-1.pdf",
+            ],
+            [
+              "2023",
+              "Hasil Evaluasi Akuntabilitas Kinerja 2023",
+              "https://drive.google.com/file/d/1JAJRiBQGE14DrhYiCMoj_9NnTCaP5TYN/preview",
+            ],
+            [
+              "2022",
+              "Hasil Evaluasi Akuntabilitas Kinerja 2022",
+              "https://drive.google.com/file/d/1wzvzQwtIEO4ZAdtz9982EC9C2iRatWGH/preview",
+            ],
+            [
+              "2021",
+              "Hasil Evaluasi Akuntabilitas Kinerja 2021",
+              "https://drive.google.com/file/d/17qcqM1rjCUm-0h03vyWOn26Vu2h0nxEO/preview",
+            ],
+          ],
+        },
+        {
+          title: "Pedoman & Peraturan Rektor Terkait SAKIP",
+          col1: "",
+          col2: "Dokumen",
+          rows: [
+            [
+              "",
+              "Pedoman SAKIP Kemendikbudristek",
+              "https://drive.google.com/drive/folders/1RT1m0thcvaV252HSC49cBjbuKJe-Zi6i?usp=drive_link",
+            ],
+            [
+              "",
+              "Peraturan Rektor UM Terkait SAKIP",
+              "https://drive.google.com/drive/folders/1mF64SZMSgHwosTdrTw3B4vu5ySyre8t1?usp=drive_link",
+            ],
+          ],
+        },
+      ];
+      const pkGroups = [
+        {
+          title: "Institusi — Kontrak & Perjanjian Kinerja Rektor (2020–2026)",
+          col1: "No",
+          col2: "Nama Dokumen",
+          rows: [
+            [
+              1,
+              "Kontrak Kinerja Rektor UM dengan Dirjen Perbendaharaan, Kemenkeu Tahun 2020",
+              "https://um.ac.id/wp-content/uploads/2020/10/Kontrak-Kinerja-Rektor-BLU.pdf",
+            ],
+            [
+              2,
+              "Kontrak Kinerja Rektor UM dengan Dirjen Perbendaharaan, Kemenkeu Tahun 2021",
+              "https://um.ac.id/wp-content/uploads/2021/05/KK-UM-PKBLU-2021-1.pdf",
+            ],
+            [
+              3,
+              "Perjanjian Kinerja UM dengan Dirjen Dikti, Kemendikbud Tahun 2021",
+              "https://um.ac.id/wp-content/uploads/2021/03/PK-UM-Kemdikbud-2021-1.pdf",
+            ],
+            [
+              4,
+              "Perjanjian Kinerja UM dengan Dirjen Dikti, Kemendikbud Tahun 2022",
+              "https://um.ac.id/wp-content/uploads/2023/11/0-Revisi-PK-UM-2022-New.pdf",
+            ],
+            [
+              5,
+              "Perjanjian Kinerja UM dengan Dirjen Dikti, Kemendikbud Tahun 2023",
+              "https://um.ac.id/wp-content/uploads/2023/11/0-Univ.pdf",
+            ],
+            [
+              6,
+              "Perjanjian Kinerja UM dengan Dirjen Dikti, Kemendikbud Tahun 2023 (Revisi)",
+              "https://um.ac.id/wp-content/uploads/2023/11/0-PK-UM-Dirjen-Dikti-2023-revisi-Nov.pdf",
+            ],
+            [
+              7,
+              "Perjanjian Kinerja UM dengan Dirjen Dikti, Kemendikbudristek Tahun 2024",
+              "https://um.ac.id/wp-content/uploads/2024/03/PK_UM-KEMENDIKBUDRISTEK_2024.pdf",
+            ],
+            [
+              8,
+              "Perjanjian Kinerja UM dengan Dirjen Dikti, Kemendiktisaintek Tahun 2025",
+              "https://um.ac.id/wp-content/uploads/2025/09/PK-Rektor-dengan-Direktorat-Jenderal-Pendidikan-Tinggi-Th-2025.pdf",
+            ],
+            [
+              9,
+              "Kontrak Kinerja UM dengan Dirjen Dikti, Kemendiktisaintek Tahun 2026",
+              "https://um.ac.id/wp-content/uploads/2026/04/Universitas-Negeri-Malang.-Universitas-Negeri-Malang.-Universitas-Negeri-Malang.pdf",
+            ],
+            [
+              10,
+              "Perjanjian Kinerja UM dengan Dirjen Dikti, Kemendiktisaintek Tahun 2026",
+              "https://um.ac.id/wp-content/uploads/2026/07/Perjanjian-Kinerja-UM-2026-tte_pkawal_693445.pdf",
+            ],
+          ],
+        },
+        {
+          title: "Fakultas Tahun 2026",
+          col1: "Kode",
+          col2: "Pimpinan",
+          rows: [
+            [
+              "FIP",
+              "Dekan FIP",
+              "https://um.ac.id/wp-content/uploads/2026/04/0.-PK-Dekan-Fakultas-Ilmu-Pendidikan.pdf",
+            ],
+            [
+              "FS",
+              "Dekan FS",
+              "https://um.ac.id/wp-content/uploads/2026/04/0.-PK-Dekan-Fakultas-Sastra.pdf",
+            ],
+            [
+              "FMIPA",
+              "Dekan FMIPA",
+              "https://um.ac.id/wp-content/uploads/2026/04/0.-PK-Dekan-Fakultas-MIPA.pdf.pdf",
+            ],
+            [
+              "FEB",
+              "Dekan FEB",
+              "https://um.ac.id/wp-content/uploads/2026/04/0.-PK-Dekan-Fakultas-Ekonomi-Bisnis.pdf",
+            ],
+            [
+              "FT",
+              "Dekan FT",
+              "https://um.ac.id/wp-content/uploads/2026/04/0.-PK-Dekan-Fakultas-Teknik.pdf",
+            ],
+            [
+              "FIK",
+              "Dekan FIK",
+              "https://um.ac.id/wp-content/uploads/2026/04/0.-PK-Dekan-Fakultas-Ilmu-Keolahragaan.pdf",
+            ],
+            [
+              "FIS",
+              "Dekan FIS",
+              "https://um.ac.id/wp-content/uploads/2026/04/0.-PK-Dekan-Fakultas-Ilmu-Sosial.pdf",
+            ],
+            [
+              "FPsi",
+              "Dekan FPsi",
+              "https://um.ac.id/wp-content/uploads/2026/04/0.-PK-Dekan-Fakultas-Psikologi.pdf",
+            ],
+            [
+              "FV",
+              "Dekan FV",
+              "https://um.ac.id/wp-content/uploads/2026/04/0.-PK-Dekan-Fakultas-Vokasi.pdf",
+            ],
+            [
+              "FK",
+              "Dekan FK",
+              "https://um.ac.id/wp-content/uploads/2026/04/0.-PK-Dekan-Fakultas-Kedokteran.pdf",
+            ],
+            [
+              "Pascasarjana",
+              "Direktur Sekolah Pascasarjana",
+              "https://um.ac.id/wp-content/uploads/2026/04/0.-PK-Direktur-Sekolah-Pascasarjana.pdf",
+            ],
+          ],
+        },
+        {
+          title: "Badan, Lembaga & UPT Tahun 2026",
+          col1: "No",
+          col2: "Unit / Pimpinan",
+          rows: [
+            [
+              1,
+              "Direktur Kantor Urusan Internasional",
+              "https://um.ac.id/wp-content/uploads/2026/04/4.-UPT-KUI.pdf",
+            ],
+            [
+              2,
+              "Direktur PDIPHK",
+              "https://um.ac.id/wp-content/uploads/2026/04/2.-Direktorat-PDIPHK.pdf",
+            ],
+            [
+              3,
+              "Direktur Kemahasiswaan dan Alumni",
+              "https://um.ac.id/wp-content/uploads/2025/11/Direktorat-Kemahasiswaan-dan-Alumni.pdf",
+            ],
+            [
+              4,
+              "Ketua LP2M",
+              "https://um.ac.id/wp-content/uploads/2026/04/4.-Direktorat-Kemahasiswaan-Alumni.pdf",
+            ],
+            [
+              5,
+              "Ketua LP3",
+              "https://um.ac.id/wp-content/uploads/2026/04/2.-LPPP.pdf",
+            ],
+            [
+              6,
+              "Kepala UPT Perpustakaan",
+              "https://um.ac.id/wp-content/uploads/2026/04/9.-UPT-Perpustakaan.pdf",
+            ],
+            [
+              7,
+              "Kepala UPT PTIK",
+              "https://um.ac.id/wp-content/uploads/2026/04/3.-UPT-PTIK.pdf",
+            ],
+            [
+              8,
+              "Kepala UPT Laboratorium Pancasila",
+              "https://um.ac.id/wp-content/uploads/2026/04/6.-UPT-Lab.-Pancasila.pdf",
+            ],
+            [
+              9,
+              "Kepala UPT Badan Penjaminan Mutu",
+              "https://um.ac.id/wp-content/uploads/2026/04/3.-BPM.pdf",
+            ],
+            [
+              10,
+              "Kepala UPT Laboratorium Pendidikan Agama",
+              "https://um.ac.id/wp-content/uploads/2026/04/7.-UPT-LPA.pdf",
+            ],
+            [
+              11,
+              "Kepala UPT Publikasi Ilmiah",
+              "https://um.ac.id/wp-content/uploads/2026/04/5.-UPT-Publikasi-Ilmiah.pdf",
+            ],
+            [
+              12,
+              "Kepala UPT Layanan Kesehatan",
+              "https://um.ac.id/wp-content/uploads/2026/04/5.-UPT-Layanan-Kesehatan.pdf",
+            ],
+            [
+              13,
+              "Kepala UPT Pelaksana Akademik di Kampus Blitar",
+              "https://um.ac.id/wp-content/uploads/2026/04/10.-UPT-Pelaksana-Akademik-Blitar.pdf",
+            ],
+            [
+              14,
+              "Ketua Badan Pengawas Internal",
+              "https://um.ac.id/wp-content/uploads/2026/04/2.-BPI.pdf",
+            ],
+            [
+              15,
+              "Direktur Badan Pengembangan Usaha dan Dana Abadi",
+              "https://um.ac.id/wp-content/uploads/2026/04/7.-BPUDA.pdf",
+            ],
+            [
+              16,
+              "Direktur Sarana, Prasarana, dan Aset",
+              "https://um.ac.id/wp-content/uploads/2026/04/4.-Direktorat-Sarpras.pdf",
+            ],
+            [
+              17,
+              "UPT Layanan Pengadaan",
+              "https://um.ac.id/wp-content/uploads/2026/04/6.-UPT-Layanan-Pengadaan.pdf",
+            ],
+            [
+              18,
+              "Direktorat SDM dan Keuangan",
+              "https://um.ac.id/wp-content/uploads/2026/04/3.-Direktorat-SDMK.pdf",
+            ],
+            [
+              19,
+              "UPT Laboratorium Terpadu",
+              "https://um.ac.id/wp-content/uploads/2026/04/4.-UPT-Lab-Terpadu.pdf",
+            ],
+            [
+              20,
+              "Direktorat Inovasi",
+              "https://um.ac.id/wp-content/uploads/2026/04/3.-Direktorat-Inovasi.pdf",
+            ],
+            [
+              21,
+              "UPT Publikasi Ilmiah (dok. 2)",
+              "https://um.ac.id/wp-content/uploads/2026/04/5.-UPT-Publikasi-Ilmiah-1.pdf",
+            ],
+            [
+              22,
+              "Direktorat Pendidikan",
+              "https://um.ac.id/wp-content/uploads/2026/04/5.-Direktorat-Pendidikan.pdf",
+            ],
+            [
+              23,
+              "UPT Balai Bahasa",
+              "https://um.ac.id/wp-content/uploads/2026/04/5.-UPT-Balai-Bahasa.pdf",
+            ],
+            [
+              24,
+              "UPT Pusat Studi Bahasa dan Budaya Indonesia",
+              "https://um.ac.id/wp-content/uploads/2026/04/6.-UPT-PSBBI.pdf",
+            ],
+            [
+              25,
+              "Sekretariat Universitas",
+              "https://um.ac.id/wp-content/uploads/2026/04/1.-Sekretaris-Universitas-1.pdf",
+            ],
+            [
+              26,
+              "Kepala UPT LSP",
+              "https://um.ac.id/wp-content/uploads/2026/04/8.-UPT-LSP.pdf",
+            ],
+            [
+              27,
+              "Kepala UPT Pengelola Sekolah Laboratorium",
+              "https://um.ac.id/wp-content/uploads/2026/04/11.-UPT-Pengelola-Sekolah-Lab-UM.pdf",
+            ],
+          ],
+        },
+        {
+          title: "Cascading 2026",
+          col1: "No",
+          col2: "Unit / Pimpinan",
+          rows: [
+            [
+              1,
+              "Fakultas",
+              "https://drive.google.com/drive/folders/1OYknkfLzw-uAc2hLT0tcARcHN-ZKzpbB",
+            ],
+            [
+              2,
+              "Unit Kerja",
+              "https://drive.google.com/drive/folders/1OYknkfLzw-uAc2hLT0tcARcHN-ZKzpbB",
+            ],
+          ],
+        },
+        {
+          title: "Fakultas Tahun 2025",
+          col1: "Kode",
+          col2: "Pimpinan",
+          rows: [
+            [
+              "FIP",
+              "Dekan FIP",
+              "https://um.ac.id/wp-content/uploads/2025/11/Perjanjian-Kinerja-Fakultas-Ilmu-Pendidikan-Tahun-2025.pdf",
+            ],
+            [
+              "FS",
+              "Dekan FS",
+              "https://um.ac.id/wp-content/uploads/2024/08/Perjanjian-Kinerja-FS.pdf",
+            ],
+            [
+              "FMIPA",
+              "Dekan FMIPA",
+              "https://um.ac.id/wp-content/uploads/2024/08/Perjanjian-Kinerja-FMIPA.pdf",
+            ],
+            [
+              "FEB",
+              "Dekan FEB",
+              "https://um.ac.id/wp-content/uploads/2024/08/Perjanjian-Kinerja-FEB.pdf",
+            ],
+            [
+              "FT",
+              "Dekan FT",
+              "https://um.ac.id/wp-content/uploads/2024/08/Perjanjian-Kinerja-FT.pdf",
+            ],
+            [
+              "FIK",
+              "Dekan FIK",
+              "https://um.ac.id/wp-content/uploads/2024/08/Perjanjian-Kinerja-FIK.pdf",
+            ],
+            [
+              "FIS",
+              "Dekan FIS",
+              "https://um.ac.id/wp-content/uploads/2024/08/Perjanjian-Kinerja-FIS.pdf",
+            ],
+            [
+              "FPsi",
+              "Dekan FPsi",
+              "https://um.ac.id/wp-content/uploads/2024/08/Perjanjian-Kinerja-Fpsi.pdf",
+            ],
+            [
+              "FV",
+              "Dekan FV",
+              "https://um.ac.id/wp-content/uploads/2025/11/9.-Perjanjian-Kinerja-Fakultas-Vokasi-Tahun-2025-1.pdf",
+            ],
+            [
+              "FK",
+              "Dekan FK",
+              "https://um.ac.id/wp-content/uploads/2025/11/10-Perjanjian-Kinerja-Fakultas-Kedokteran-revisi-1.pdf",
+            ],
+            [
+              "Pascasarjana",
+              "Direktur Sekolah Pascasarjana",
+              "https://um.ac.id/wp-content/uploads/2022/06/9-Perjanjian-Kinerja-Direktur-SPs-2022.pdf",
+            ],
+          ],
+        },
+        {
+          title: "Cascading 2025",
+          col1: "No",
+          col2: "Unit / Pimpinan",
+          rows: [
+            [
+              1,
+              "Fakultas",
+              "https://drive.google.com/file/d/1unSvZ4nMuH2RtefrSV48_FpkqS4_lIM4/view?usp=drive_link",
+            ],
+            [
+              2,
+              "Unit Kerja",
+              "https://drive.google.com/file/d/1m3LP-Lsw1gnzdh061-11liQPE8IwDu-s/view?usp=drive_link",
+            ],
+          ],
+        },
+        {
+          title: "Badan, Lembaga & UPT Tahun 2025",
+          col1: "No",
+          col2: "Unit / Pimpinan",
+          rows: [
+            [
+              1,
+              "Direktur Kantor Urusan Internasional",
+              "https://um.ac.id/wp-content/uploads/2025/11/UPT-Kantor-Urusan-Internasional.pdf",
+            ],
+            [
+              2,
+              "Direktur PDIPHK",
+              "https://um.ac.id/wp-content/uploads/2025/11/PK-PDIPHK.pdf",
+            ],
+            [
+              3,
+              "Direktur Kemahasiswaan dan Alumni",
+              "https://um.ac.id/wp-content/uploads/2025/11/Direktorat-Kemahasiswaan-dan-Alumni.pdf",
+            ],
+            [
+              4,
+              "Ketua LP2M",
+              "https://um.ac.id/wp-content/uploads/2025/11/LPPM.pdf",
+            ],
+            [
+              5,
+              "Ketua LP3",
+              "https://um.ac.id/wp-content/uploads/2025/11/LPPP.pdf",
+            ],
+            [
+              6,
+              "Kepala UPT Perpustakaan",
+              "https://um.ac.id/wp-content/uploads/2025/11/UPT-Pepustakaan.pdf",
+            ],
+            [
+              7,
+              "Kepala UPT PTIK",
+              "https://um.ac.id/wp-content/uploads/2025/11/UPT-Pusat-Teknologi-Informasi-dan-Komunikasi.pdf",
+            ],
+            [
+              8,
+              "Kepala UPT Laboratorium Pancasila",
+              "https://um.ac.id/wp-content/uploads/2025/11/UPT-Laboratorium-Pancasila.pdf",
+            ],
+            [
+              9,
+              "Kepala UPT Badan Penjaminan Mutu",
+              "https://um.ac.id/wp-content/uploads/2025/11/Badan-Penjaminan-Mutu.pdf",
+            ],
+            [
+              10,
+              "Kepala UPT Laboratorium Pendidikan Agama",
+              "https://um.ac.id/wp-content/uploads/2025/11/UPT-Laboratorium-Pendidikan-Agama.pdf",
+            ],
+            [
+              11,
+              "Kepala UPT Publikasi Ilmiah",
+              "https://um.ac.id/wp-content/uploads/2025/11/UPT-Publikasi-Ilmiah.pdf",
+            ],
+            [
+              12,
+              "Kepala UPT Layanan Kesehatan",
+              "https://um.ac.id/wp-content/uploads/2025/11/UPT-Layanan-Kesehatan.pdf",
+            ],
+            [
+              13,
+              "Kepala UPT Pelaksana Akademik di Kampus Blitar",
+              "https://um.ac.id/wp-content/uploads/2025/11/UPT-Pelaksana-Akademik-di-Kampus-Blitar.pdf",
+            ],
+            [
+              14,
+              "Ketua Badan Pengawas Internal",
+              "https://um.ac.id/wp-content/uploads/2025/11/Badan-Pengawas-Internal.pdf",
+            ],
+            [
+              15,
+              "Direktur Badan Pengembangan Usaha dan Dana Abadi",
+              "https://um.ac.id/wp-content/uploads/2025/11/BPUDA.pdf",
+            ],
+            [
+              16,
+              "Direktur Sarana, Prasarana, dan Aset",
+              "https://um.ac.id/wp-content/uploads/2025/11/Direktur-Sarana-Prasarana-dan-Aset.pdf",
+            ],
+            [
+              17,
+              "UPT Layanan Pengadaan",
+              "https://um.ac.id/wp-content/uploads/2025/11/UPT-Layanan-Pengadaan.pdf",
+            ],
+            [
+              18,
+              "Direktorat SDM dan Keuangan",
+              "https://um.ac.id/wp-content/uploads/2025/11/Direktorat-SDMK.pdf",
+            ],
+            [
+              19,
+              "UPT Laboratorium Terpadu",
+              "https://um.ac.id/wp-content/uploads/2025/11/UPT-Laboratorium-Terpadu.pdf",
+            ],
+            [
+              20,
+              "Direktorat Inovasi",
+              "https://um.ac.id/wp-content/uploads/2025/11/Direktorat-Inovasi.pdf",
+            ],
+            [
+              21,
+              "UPT Publikasi Ilmiah (dok. 2)",
+              "https://um.ac.id/wp-content/uploads/2025/11/UPT-Publikasi-Ilmiah-1.pdf",
+            ],
+            [
+              22,
+              "Ketua LPPM (dok. 2)",
+              "https://um.ac.id/wp-content/uploads/2025/11/LPPM-1.pdf",
+            ],
+            [
+              23,
+              "UPT Balai Bahasa",
+              "https://um.ac.id/wp-content/uploads/2025/11/UPT-Balai-Bahasa.pdf",
+            ],
+            [
+              24,
+              "UPT Pusat Studi Bahasa dan Budaya Indonesia",
+              "https://um.ac.id/wp-content/uploads/2025/11/UPT-Pusat-Studi-Bahasa-dan-Budaya-Indonesia.pdf",
+            ],
+            [
+              25,
+              "Direktorat PDIPHK (lengkap)",
+              "https://um.ac.id/wp-content/uploads/2025/11/Direktorat-PDIPHK.pdf",
+            ],
+            [
+              26,
+              "Direktorat PDIPHK (revisi)",
+              "https://um.ac.id/wp-content/uploads/2025/11/PK-PDIPHK.-revisi.pdf",
+            ],
+            [
+              27,
+              "Sekretariat Universitas",
+              "https://um.ac.id/wp-content/uploads/2025/11/Sekretariat-Universitas.pdf",
+            ],
+          ],
+        },
+        {
+          title: "Fakultas Tahun 2024",
+          col1: "No",
+          col2: "Unit / Pimpinan",
+          rows: [
+            [
+              1,
+              "Dekan FIP",
+              "https://um.ac.id/wp-content/uploads/2024/08/Perjanjian-Kinerja-FIP.pdf",
+            ],
+            [
+              2,
+              "Ketua Departemen BK",
+              "https://um.ac.id/wp-content/uploads/2024/08/Ketua-Departemen-Bimbingan-dan-Konseling.pdf",
+            ],
+            [
+              3,
+              "Ketua Departemen TEP",
+              "https://um.ac.id/wp-content/uploads/2024/08/Ketua-Departemen-Teknologi-Pendidikan.pdf",
+            ],
+            [
+              4,
+              "Ketua Departemen AP",
+              "https://um.ac.id/wp-content/uploads/2024/08/Ketua-Departemen-Administrasi-Pendidikan.pdf",
+            ],
+            [
+              5,
+              "Ketua Departemen PLS",
+              "https://um.ac.id/wp-content/uploads/2024/08/Ketua-Departemen-Pendidikan-Luar-Sekolah.pdf",
+            ],
+            [
+              6,
+              "Ketua Departemen KSDP",
+              "https://um.ac.id/wp-content/uploads/2024/08/Ketua-Departemen-Kependidikan-Sekolah-Dasar-dan-Prasekolah.pdf",
+            ],
+            [
+              7,
+              "Ketua Departemen PLB",
+              "https://um.ac.id/wp-content/uploads/2022/05/1-FIP-6-Departemen-PLB-2022.pdf",
+            ],
+            [
+              8,
+              "Dekan FS",
+              "https://um.ac.id/wp-content/uploads/2024/08/Perjanjian-Kinerja-FS.pdf",
+            ],
+            [
+              9,
+              "Ketua Departemen Bahasa Indonesia / Inggris / Arab / Jerman / Seni & Desain",
+              "https://um.ac.id/wp-content/uploads/2022/06/2-FS.pdf",
+            ],
+            [
+              10,
+              "Dekan FMIPA",
+              "https://um.ac.id/wp-content/uploads/2024/08/Perjanjian-Kinerja-FMIPA.pdf",
+            ],
+            [
+              11,
+              "Ketua Departemen Matematika",
+              "https://um.ac.id/wp-content/uploads/2024/08/Ketua-Prodi-S1-Matematika.pdf",
+            ],
+            [
+              12,
+              "Ketua Departemen Fisika",
+              "https://um.ac.id/wp-content/uploads/2022/06/PK-Ketua-Departemen-Fisika-2022.pdf",
+            ],
+            [
+              13,
+              "Ketua Departemen Kimia",
+              "https://um.ac.id/wp-content/uploads/2024/08/Ketua-Departemen-Kimia.pdf",
+            ],
+            [
+              14,
+              "Ketua Departemen Biologi",
+              "https://um.ac.id/wp-content/uploads/2024/08/Ketua-Departemen-Biologi.pdf",
+            ],
+            [
+              15,
+              "Ketua Departemen Pendidikan IPA",
+              "https://um.ac.id/wp-content/uploads/2024/08/Ketua-Departemen-Pendidikan-IPA.pdf",
+            ],
+            [
+              16,
+              "Ketua Departemen Sains Terapan",
+              "https://um.ac.id/wp-content/uploads/2024/08/Ketua-Departemen-Sains-Terapan.pdf",
+            ],
+            [
+              17,
+              "Dekan FEB",
+              "https://um.ac.id/wp-content/uploads/2024/08/Perjanjian-Kinerja-FEB.pdf",
+            ],
+            [
+              18,
+              "Ketua Departemen Manajemen",
+              "https://um.ac.id/wp-content/uploads/2022/06/4-Perjanjian-Kinerja-FEB-Ketua-Departemen-MNJ-2022.pdf",
+            ],
+            [
+              19,
+              "Ketua Departemen Akuntansi",
+              "https://um.ac.id/wp-content/uploads/2022/06/4-Perjanjian-Kinerja-FEB-Ketua-Departemen-AKT-2022.pdf",
+            ],
+            [
+              20,
+              "Ketua Departemen Ekonomi Pembangunan",
+              "https://um.ac.id/wp-content/uploads/2022/06/4-Perjanjian-Kinerja-FEB-Ketua-Departemen-EKP-2022.pdf",
+            ],
+            [
+              21,
+              "Dekan FT",
+              "https://um.ac.id/wp-content/uploads/2024/08/Perjanjian-Kinerja-FT.pdf",
+            ],
+            [
+              22,
+              "Ketua Departemen Teknik Mesin",
+              "https://um.ac.id/wp-content/uploads/2022/06/5-Perjanjian-Kinerja-FT-Ketua-Departemen-Teknik-Mesin-Tahun-2022.pdf",
+            ],
+            [
+              23,
+              "Ketua Departemen Teknik Sipil",
+              "https://um.ac.id/wp-content/uploads/2022/06/5-Perjanjian-Kinerja-FT-Ketua-Departemen-Teknik-Sipil-Tahun-2022.pdf",
+            ],
+            [
+              24,
+              "Ketua Departemen Teknik Elektro",
+              "https://um.ac.id/wp-content/uploads/2022/06/5-Perjanjian-Kinerja-FT-Ketua-Departemen-Teknik-Eelektro-Tahun-2022.pdf",
+            ],
+            [
+              25,
+              "Ketua Departemen Teknologi Industri",
+              "https://um.ac.id/wp-content/uploads/2022/06/5-Perjanjian-Kinerja-FT-Ketua-Departemen-Teknik-Industri-Tahun-2022.pdf",
+            ],
+            [
+              26,
+              "Dekan FIK",
+              "https://um.ac.id/wp-content/uploads/2024/08/Perjanjian-Kinerja-FIK.pdf",
+            ],
+            [
+              27,
+              "Ketua Departemen PJKR",
+              "https://um.ac.id/wp-content/uploads/2022/06/6-Perjanjian-Kinerja-Ketua-Departemen-PJKR-Tahun-2022.pdf",
+            ],
+            [
+              28,
+              "Ketua Departemen IK",
+              "https://um.ac.id/wp-content/uploads/2022/06/6-Perjanjian-Kinerja-Ketua-Departemen-IK-Tahun-2022.pdf",
+            ],
+            [
+              29,
+              "Ketua Departemen PKO",
+              "https://um.ac.id/wp-content/uploads/2022/06/6-Perjanjian-Kinerja-Ketua-Departemen-PKO-Tahun-2022.pdf",
+            ],
+            [
+              30,
+              "Ketua Departemen IKM",
+              "https://um.ac.id/wp-content/uploads/2022/06/6-Perjanjian-Kinerja-Ketua-Departemen-IKM-Tahun-2022.pdf",
+            ],
+            [
+              32,
+              "Dekan FIS",
+              "https://um.ac.id/wp-content/uploads/2024/08/Perjanjian-Kinerja-FIS.pdf",
+            ],
+            [
+              33,
+              "Ketua Departemen Hukum & Kewarganegaraan / Geografi / Sejarah / Koord. S1 Pendidikan IPS / Sosiologi",
+              "https://um.ac.id/wp-content/uploads/2022/06/7-FIS.pdf",
+            ],
+            [
+              34,
+              "Dekan FPsi",
+              "https://um.ac.id/wp-content/uploads/2024/08/Perjanjian-Kinerja-Fpsi.pdf",
+            ],
+            [
+              35,
+              "Direktur Sekolah Pascasarjana",
+              "https://um.ac.id/wp-content/uploads/2022/06/9-Perjanjian-Kinerja-Direktur-SPs-2022.pdf",
+            ],
+            [
+              36,
+              "Wakil Direktur Sekolah Pascasarjana",
+              "https://um.ac.id/wp-content/uploads/2022/06/9-Wakil-Direktur-Sekolah-Pascasarjana-Tahun-2022-SPs.pdf",
+            ],
+          ],
+        },
+        {
+          title: "Badan, Lembaga & UPT Tahun 2024",
+          col1: "No",
+          col2: "Unit / Pimpinan",
+          rows: [
+            [
+              1,
+              "Direktur Kantor Urusan Internasional",
+              "https://um.ac.id/wp-content/uploads/2024/08/24.-Dir.-KUI.pdf",
+            ],
+            [
+              2,
+              "Direktur PDIPHK",
+              "https://um.ac.id/wp-content/uploads/2024/08/25.-Dir.PDIPHK-sdh-final.pdf",
+            ],
+            [
+              3,
+              "Direktur Kemahasiswaan dan Alumni",
+              "https://um.ac.id/wp-content/uploads/2024/08/6.-Dir-Kemahasiswaan-dan-Alumni-1.pdf",
+            ],
+            [
+              4,
+              "Ketua LP2M",
+              "https://um.ac.id/wp-content/uploads/2024/08/2.-LP2M.pdf",
+            ],
+            [
+              5,
+              "Ketua LP3",
+              "https://um.ac.id/wp-content/uploads/2024/08/3.-LP3.pdf",
+            ],
+            [
+              6,
+              "Kepala UPT Perpustakaan",
+              "https://um.ac.id/wp-content/uploads/2024/08/10.-UPT-Perpustakaan.pdf",
+            ],
+            [
+              7,
+              "Kepala UPT PTIK",
+              "https://um.ac.id/wp-content/uploads/2024/08/15.-UPT-PTIK.pdf",
+            ],
+            [
+              8,
+              "Kepala UPT Laboratorium Pancasila",
+              "https://um.ac.id/wp-content/uploads/2024/08/12.-UPT-Laboratorium-Pancasila.pdf",
+            ],
+            [
+              9,
+              "Kepala UPT Badan Penjaminan Mutu",
+              "https://um.ac.id/wp-content/uploads/2024/08/8.-Badan-Penjaminan-Mutu.pdf",
+            ],
+            [
+              10,
+              "Kepala UPT Laboratorium Pendidikan Agama",
+              "https://um.ac.id/wp-content/uploads/2024/08/18.-UPT-Laboratorium-Pendidikan-Agama.pdf",
+            ],
+            [
+              11,
+              "Kepala UPT Publikasi Ilmiah",
+              "https://um.ac.id/wp-content/uploads/2024/08/22-UPT.-Publikasi-Ilmiah.pdf",
+            ],
+            [
+              12,
+              "Kepala UPT Layanan Kesehatan",
+              "https://um.ac.id/wp-content/uploads/2024/08/19.-UPT-Layanan-Kesehatan.pdf",
+            ],
+            [
+              13,
+              "Kepala UPT Pelaksana Akademik di Kampus Blitar",
+              "https://um.ac.id/wp-content/uploads/2024/08/23.-UPT-Akademik-Blitar.pdf",
+            ],
+            [
+              14,
+              "Ketua Badan Pengawas Internal",
+              "https://um.ac.id/wp-content/uploads/2024/08/20.-Badan-Pengawas-Internal.pdf",
+            ],
+          ],
+        },
+        {
+          title: "Fakultas Tahun 2022",
+          col1: "No",
+          col2: "Unit / Pimpinan",
+          rows: [
+            [
+              1,
+              "Dekan FIP",
+              "https://um.ac.id/wp-content/uploads/2022/05/1-Perjanjian-Kinerja-FIP-2022.pdf",
+            ],
+            [
+              2,
+              "Ketua Departemen BK",
+              "https://um.ac.id/wp-content/uploads/2022/05/1-FIP-1-Departemen-BK-2022.pdf",
+            ],
+            [
+              8,
+              "Dekan FS",
+              "https://um.ac.id/wp-content/uploads/2022/06/2-Perjanjian-Kinerja-FS-2022.pdf",
+            ],
+            [
+              10,
+              "Dekan FMIPA",
+              "https://um.ac.id/wp-content/uploads/2022/06/3-Perjanjian-Kinerja-FMIPA-2022.pdf",
+            ],
+            [
+              16,
+              "Dekan FEB",
+              "https://um.ac.id/wp-content/uploads/2022/06/4-Perjanjian-Kinerja-Dekan-FEB-2022.pdf",
+            ],
+            [
+              20,
+              "Dekan FT",
+              "https://um.ac.id/wp-content/uploads/2022/06/5-Perjanjian-Kinerja-Dekan-FT-2022.pdf",
+            ],
+            [
+              25,
+              "Dekan FIK",
+              "https://um.ac.id/wp-content/uploads/2022/06/6-Perjanjian-Kinerja-Dekan-FIK-2022.pdf",
+            ],
+            [
+              30,
+              "Dekan FIS",
+              "https://um.ac.id/wp-content/uploads/2022/06/7-Perjanjian-Kinerja-Dekan-FIS-2022.pdf",
+            ],
+            [
+              32,
+              "Dekan FPsi",
+              "https://um.ac.id/wp-content/uploads/2022/06/8-Perjanjian-Kinerja-Dekan-FPsI-2022.pdf",
+            ],
+            [
+              33,
+              "Direktur Sekolah Pascasarjana",
+              "https://um.ac.id/wp-content/uploads/2022/06/9-Perjanjian-Kinerja-Direktur-SPs-2022.pdf",
+            ],
+            [
+              34,
+              "Wakil Direktur Sekolah Pascasarjana",
+              "https://um.ac.id/wp-content/uploads/2022/06/9-Wakil-Direktur-Sekolah-Pascasarjana-Tahun-2022-SPs.pdf",
+            ],
+          ],
+        },
+        {
+          title: "Lembaga Tahun 2022",
+          col1: "No",
+          col2: "Unit / Pimpinan",
+          rows: [
+            [
+              1,
+              "Direktur Kantor Urusan Internasional",
+              "https://um.ac.id/wp-content/uploads/2022/06/Perjanjian-Kinerja-HI-tahun-2022.pdf",
+            ],
+            [
+              2,
+              "Direktur PMPHK",
+              "https://um.ac.id/wp-content/uploads/2022/06/Perjanjian-Kinerja-Direktur-PMPHK-tahun-2022.pdf",
+            ],
+            [
+              3,
+              "Direktur Kemahasiswaan dan Alumni",
+              "https://um.ac.id/wp-content/uploads/2022/06/Perjanjian-Kerja-Direktur-Kemahasiswaan-dan-alumni-tahun-2022.pdf",
+            ],
+            [
+              4,
+              "Ketua LP2M",
+              "https://um.ac.id/wp-content/uploads/2022/06/10-Perjanjian-Kinerja-LP2M-Tahun-2022.pdf",
+            ],
+            [
+              5,
+              "Ketua LP3",
+              "https://um.ac.id/wp-content/uploads/2022/06/11-Perjanjian-Kinerja-LP3-Tahun-2022.pdf",
+            ],
+            [
+              6,
+              "Kepala UPT Perpustakaan",
+              "https://um.ac.id/wp-content/uploads/2022/06/12-Perjanjian-Kinerja-Perpustakaan-Tahun-2022.pdf",
+            ],
+            [
+              7,
+              "Kepala UPT Sistem Komunikasi dan Teknologi",
+              "https://um.ac.id/wp-content/uploads/2022/06/13-Perjanjian-Kinerja-PTIK-Tahun-2022.pdf",
+            ],
+            [
+              8,
+              "Kepala UPT Pusat Pengkajian Pancasila",
+              "https://um.ac.id/wp-content/uploads/2022/06/14-Perjanjian-Kinerja-P2P-Tahun-2022.pdf",
+            ],
+            [
+              9,
+              "Kepala UPT Satuan Penjaminan Mutu",
+              "https://um.ac.id/wp-content/uploads/2022/06/15-Perjanjian-Kinerja-SPM-Tahun-2022.pdf",
+            ],
+            [
+              10,
+              "Ketua Satuan Pengawas Internal",
+              "https://um.ac.id/wp-content/uploads/2022/06/16-Perjanjian-Kinerja-SPI-Tahun-2022.pdf",
+            ],
+          ],
+        },
+        {
+          title: "Lembaga Tahun 2021",
+          col1: "No",
+          col2: "Unit / Jabatan",
+          rows: [
+            [
+              1,
+              "Direktur HI",
+              "https://um.ac.id/wp-content/uploads/2021/03/18-Direktur-HI.pdf",
+            ],
+            [
+              3,
+              "Ketua SPI Tahun 2021",
+              "https://um.ac.id/wp-content/uploads/2021/03/16-SPI.pdf",
+            ],
+            [
+              4,
+              "Ketua Pusat Bisnis Tahun 2021",
+              "https://um.ac.id/wp-content/uploads/2021/03/17-PUSBIS.pdf",
+            ],
+            [
+              5,
+              "Ketua LP2M Tahun 2021",
+              "https://um.ac.id/wp-content/uploads/2021/03/10-LP2M.pdf",
+            ],
+            [
+              7,
+              "Ketua LP3 Tahun 2021",
+              "https://um.ac.id/wp-content/uploads/2021/03/11-Ketua-LP3.pdf",
+            ],
+          ],
+        },
+        {
+          title: "UPT Tahun 2020/2021",
+          col1: "No",
+          col2: "Unit / Jabatan",
+          rows: [
+            [
+              1,
+              "Kepala UPT Perpustakaan",
+              "https://um.ac.id/wp-content/uploads/2021/03/12-Perpustakaan.pdf",
+            ],
+            [
+              3,
+              "Kepala UPT PTIK",
+              "https://um.ac.id/wp-content/uploads/2021/03/13-PTIK.pdf",
+            ],
+            [
+              5,
+              "Kepala UPT P2P",
+              "https://um.ac.id/wp-content/uploads/2021/03/14-P2P.pdf",
+            ],
+            [
+              7,
+              "Kepala UPT SPM",
+              "https://um.ac.id/wp-content/uploads/2021/03/15-SPM.pdf",
+            ],
+          ],
+        },
+        {
+          title: "Fakultas Tahun 2020/2021",
+          col1: "No",
+          col2: "Unit / Jabatan",
+          rows: [
+            [
+              1,
+              "Dekan FIP",
+              "https://um.ac.id/wp-content/uploads/2021/03/1-FIP.pdf",
+            ],
+            [
+              3,
+              "Dekan FS",
+              "https://um.ac.id/wp-content/uploads/2021/03/2-FS.pdf",
+            ],
+            [
+              5,
+              "Dekan FMIPA",
+              "https://um.ac.id/wp-content/uploads/2021/03/3-FMIPA.pdf",
+            ],
+            [
+              7,
+              "Dekan FE",
+              "https://um.ac.id/wp-content/uploads/2021/03/4-FE.pdf",
+            ],
+            [
+              9,
+              "Dekan FIK",
+              "https://um.ac.id/wp-content/uploads/2021/03/6-FIK.pdf",
+            ],
+            [
+              11,
+              "Dekan FIS",
+              "https://um.ac.id/wp-content/uploads/2021/03/7-FIS.pdf",
+            ],
+            [
+              13,
+              "Dekan FPPsi",
+              "https://um.ac.id/wp-content/uploads/2021/03/8-FPPsi.pdf",
+            ],
+            [
+              15,
+              "Direktur Pascasarjana",
+              "https://um.ac.id/wp-content/uploads/2021/03/9-Pascasarjana.pdf",
+            ],
+          ],
+        },
+        {
+          title: "Biro Tahun 2020",
+          col1: "No",
+          col2: "Unit / Jabatan",
+          rows: [
+            [1, "Kepala BAKPIK", ""],
+            [
+              3,
+              "Kepala BUK",
+              "https://um.ac.id/wp-content/uploads/2020/11/Drs.-Amin-Sidiq-M.Pd_.pdf",
+            ],
+          ],
+        },
+      ];
+      const renstrabisDocs = [
+        ["Renstra UM Tahun 2025–2029","https://um.ac.id/unduhan/renstrabis-um/"],
+        ["Renstra UM Tahun 2022–2026","https://um.ac.id/unduhan/renstrabis-um/"],
+        ["Rencana Strategis (Renstra) Tahun 2020–2024, Edisi Revisi 2023","https://um.ac.id/unduhan/renstrabis-um/"],
+        ["Definisi Operasional Renstra 2023","https://um.ac.id/unduhan/renstrabis-um/"],
+        ["Renstra UM Tahun 2020–2024","https://um.ac.id/unduhan/renstrabis-um/"],
+        ["Renstra Bisnis UM Tahun 2020–2024","https://um.ac.id/unduhan/renstrabis-um/"],
+        ["Renstra Bisnis UM Tahun 2015–2019 — Revisi Juni 2016","https://um.ac.id/unduhan/renstrabis-um/"],
+        ["Renstra Bisnis UM Tahun 2015–2019","https://um.ac.id/unduhan/renstrabis-um/"],
+      ];
+      const lakinDocs = [
+        [
+          "2013",
+          "https://um.ac.id/wp-content/uploads/2019/09/LAKIP-UM-Tahun-2013.pdf",
+        ],
+        [
+          "2014",
+          "https://um.ac.id/wp-content/uploads/2019/09/LAKIP-UM-Tahun-2014.pdf",
+        ],
+        [
+          "2015",
+          "https://um.ac.id/wp-content/uploads/2019/09/LAKIP-UM-Tahun-2015.pdf",
+        ],
+        [
+          "2016",
+          "https://um.ac.id/wp-content/uploads/2019/09/LAKIP-UM-2016.pdf",
+        ],
+        [
+          "2017",
+          "https://um.ac.id/wp-content/uploads/2019/09/Laporan-Kinerja-UM-Tahun-2017.pdf",
+        ],
+        [
+          "2018",
+          "https://um.ac.id/wp-content/uploads/2019/09/LAKIN-UM-2018-1.pdf",
+        ],
+        [
+          "2019",
+          "https://um.ac.id/wp-content/uploads/2020/03/LAKIN-UM-2019-w.pdf",
+        ],
+        [
+          "2020",
+          "https://um.ac.id/wp-content/uploads/2021/02/LAKIN-UM-2020-FINAL.pdf",
+        ],
+        [
+          "2021",
+          "https://um.ac.id/wp-content/uploads/2022/04/LAKIN-2021-OK.pdf",
+        ],
+        [
+          "2022",
+          "https://um.ac.id/wp-content/uploads/2023/03/Final-LAKIN-UM-20221.pdf",
+        ],
+        [
+          "2023",
+          "https://um.ac.id/wp-content/uploads/2024/08/4.-Laporan-Kinerja-Tahun-2023.pdf",
+        ],
+        [
+          "2024",
+          "https://um.ac.id/wp-content/uploads/2025/06/LAKIN-2024-ver-untuk-kementerian-Ok.pdf",
+        ],
+        [
+          "2025",
+          "https://um.ac.id/wp-content/uploads/2026/02/Cetak-Laporan-Kinerja-UM-2025-clean.pdf",
+        ],
+      ];
+
+      // =========================================================
+      // RENDERER: mengubah object/array data di atas menjadi
+      // kartu (.tab-full-btn-card) berisi daftar dokumen + tombol yang
+      // meredirect ke link (Drive / um.ac.id) saat diklik.
+      // =========================================================
+
+      function buildDocButton(url) {
+        const a = document.createElement("a");
+        a.className = "cta-sakip";
+        a.textContent = "Buka Dokumen";
+
+        const icon = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "svg",
+        );
+        icon.setAttribute("width", "16");
+        icon.setAttribute("height", "16");
+        const use = document.createElementNS(
+          "http://www.w3.org/2000/svg",
+          "use",
+        );
+        use.setAttribute("href", "#icon-arrow");
+        icon.appendChild(use);
+        a.appendChild(icon);
+
+        if (url) {
+          a.href = url;
+          a.target = "_blank";
+          a.rel = "noopener noreferrer";
+        } else {
+          a.classList.add("is-disabled");
+          a.setAttribute("aria-disabled", "true");
+          a.title = "Tautan belum tersedia";
+        }
+        return a;
+      }
+
+      function buildDocItem(no, name, url) {
+        const li = document.createElement("li");
+        li.className = "tab-full-btn-doc-item";
+
+        const nameEl = document.createElement("span");
+        nameEl.className = "tab-full-btn-doc-name";
+        if (no !== "" && no !== undefined && no !== null) {
+          const noEl = document.createElement("span");
+          noEl.className = "tab-full-btn-doc-no";
+          noEl.textContent = `${no}.`;
+          nameEl.appendChild(noEl);
+        }
+        nameEl.appendChild(document.createTextNode(name));
+
+        li.appendChild(nameEl);
+        li.appendChild(buildDocButton(url));
+        return li;
+      }
+
+      // Render kelompok dokumen berbentuk { title, rows: [no, nama, url] }
+      function renderDocGroups(containerEl, groups) {
+        containerEl.innerHTML = "";
+        groups.forEach((group) => {
+          const card = document.createElement("div");
+          card.className = "tab-full-btn-card";
+
+          const title = document.createElement("div");
+          title.className = "tab-full-btn-title";
+          title.textContent = group.title;
+          card.appendChild(title);
+
+          const body = document.createElement("div");
+          body.className = "tab-full-btn-body";
+          const ul = document.createElement("ul");
+          ul.className = "tab-full-btn-doc-list";
+
+          group.rows.forEach(([no, name, url]) => {
+            ul.appendChild(buildDocItem(no, name, url));
+          });
+
+          body.appendChild(ul);
+          card.appendChild(body);
+          containerEl.appendChild(card);
+        });
+      }
+
+      // Render daftar tahun+link sederhana, mis. lakinDocs: [tahun, url]
+      function renderYearDocs(containerEl, cardTitle, docs) {
+        containerEl.innerHTML = "";
+        const card = document.createElement("div");
+        card.className = "tab-full-btn-card";
+
+        const title = document.createElement("div");
+        title.className = "tab-full-btn-title";
+        title.textContent = cardTitle;
+        card.appendChild(title);
+
+        const body = document.createElement("div");
+        body.className = "tab-full-btn-body";
+        const ul = document.createElement("ul");
+        ul.className = "tab-full-btn-doc-list";
+
+        docs.forEach(([label, url]) => {
+          ul.appendChild(buildDocItem("", label, url));
+        });
+
+        body.appendChild(ul);
+        card.appendChild(body);
+        containerEl.appendChild(card);
+      }
+
+      // ---- Eksekusi render per tab ----
+      renderDocGroups(document.getElementById("c1"), sakipGroups);
+      renderDocGroups(document.getElementById("c2"), pkGroups);
+
+      // renstrabisTitles hanya berisi judul (belum ada URL Drive),
+      // jadi tombolnya tampil disabled sampai linknya dilengkapi.
+      renderYearDocs(document.getElementById("c3"),"Laporan Reintrabis", renstrabisDocs);
+
+      renderYearDocs(
+        document.getElementById("c4"),
+        "Laporan Kinerja (LAKIN) UM per Tahun",
+        lakinDocs,
+      );
+    </script>
+  </body>
+</html>

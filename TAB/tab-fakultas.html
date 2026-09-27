@@ -52,7 +52,7 @@
       }
 
       /* Tombol dropdown khusus HP (disembunyikan di desktop) */
-      .fak-menu-toggle {
+      .tab-content-toggle {
         display: none;
         width: 100%;
         align-items: center;
@@ -72,32 +72,32 @@
         -webkit-tap-highlight-color: transparent;
         touch-action: manipulation;
       }
-      .fak-menu-toggle:hover {
+      .tab-content-toggle:hover {
         background: rgba(1, 32, 96, 0.08);
       }
-      .fak-menu-toggle.open {
+      .tab-content-toggle.open {
         background: #012060;
         color: #fff;
       }
-      .fak-menu-toggle-label {
+      .tab-content-toggle-label {
         flex: 1;
         min-width: 0;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
-      .fak-menu-toggle-icon {
+      .tab-content-toggle-icon {
         width: 16px;
         height: 16px;
         flex-shrink: 0;
       }
-      .fak-menu-chevron {
+      .tab-content-chevron {
         width: 14px;
         height: 14px;
         flex-shrink: 0;
         transition: transform 0.3s ease;
       }
-      .fak-menu-toggle.open .fak-menu-chevron {
+      .tab-content-toggle.open .tab-content-chevron {
         transform: rotate(180deg);
       }
 
@@ -433,7 +433,7 @@
           max-height: none;
           overflow: visible;
         }
-        .fak-menu-toggle {
+        .tab-content-toggle {
           display: flex;
         }
 
@@ -489,7 +489,7 @@
       }
 
       @media (max-width: 380px) {
-        .fak-menu-toggle {
+        .tab-content-toggle {
           font-size: 13px;
         }
         .fak-btn {
@@ -503,9 +503,9 @@
       @media (prefers-reduced-motion: reduce) {
         .fak-list,
         .fak-list-inner,
-        .fak-menu-chevron,
+        .tab-content-chevron,
         .fak-btn,
-        .fak-menu-toggle {
+        .tab-content-toggle {
           transition: none;
         }
       }
@@ -571,20 +571,20 @@
 
         <button
           type="button"
-          class="fak-menu-toggle"
-          id="fak-menu-toggle"
+          class="tab-content-toggle"
+          id="tab-content-toggle"
           aria-expanded="false"
           aria-controls="fak-list"
         >
           <svg
-            class="fak-menu-toggle-icon"
+            class="tab-content-toggle-icon"
             width="16"
             height="16"
             aria-hidden="true"
           >
             <use href="#icon-fak"></use>
           </svg>
-          <span class="fak-menu-toggle-label" id="fak-menu-toggle-label"
+          <span class="tab-content-toggle-label" id="tab-content-toggle-label"
             >Pilih Fakultas</span
           >
         </button>
@@ -893,7 +893,7 @@
         // Label tombol dropdown di HP mengikuti nama fakultas yang aktif
         const firstActive = fakultasData[0];
         if (firstActive) {
-          document.getElementById("fak-menu-toggle-label").textContent =
+          document.getElementById("tab-content-toggle-label").textContent =
             firstActive.nama;
         }
       }
@@ -913,7 +913,7 @@
 
         // Perbarui label tombol dropdown di HP, seperti tampilan "select"
         const item = fakultasData.find((f) => f.id === id);
-        const label = document.getElementById("fak-menu-toggle-label");
+        const label = document.getElementById("tab-content-toggle-label");
         if (item && label) label.textContent = item.nama;
 
         // Di HP, tutup dropdown begitu satu fakultas dipilih supaya
@@ -921,7 +921,7 @@
         if (isMobileView()) {
           closeFakDropdown();
           const panel = document.getElementById("c-" + id);
-          const toggle = document.getElementById("fak-menu-toggle");
+          const toggle = document.getElementById("tab-content-toggle");
           if (panel && toggle) {
             const offset = toggle.getBoundingClientRect().bottom + 8;
             const top = panel.getBoundingClientRect().top;
@@ -941,16 +941,16 @@
       // Toggle dropdown fakultas (khusus tampilan HP)
       function openFakDropdown() {
         document.getElementById("fak-list").classList.add("open");
-        document.getElementById("fak-menu-toggle").classList.add("open");
+        document.getElementById("tab-content-toggle").classList.add("open");
         document
-          .getElementById("fak-menu-toggle")
+          .getElementById("tab-content-toggle")
           .setAttribute("aria-expanded", "true");
       }
       function closeFakDropdown() {
         document.getElementById("fak-list").classList.remove("open");
-        document.getElementById("fak-menu-toggle").classList.remove("open");
+        document.getElementById("tab-content-toggle").classList.remove("open");
         document
-          .getElementById("fak-menu-toggle")
+          .getElementById("tab-content-toggle")
           .setAttribute("aria-expanded", "false");
       }
       function toggleFakDropdown() {
@@ -962,7 +962,7 @@
       }
 
       document
-        .getElementById("fak-menu-toggle")
+        .getElementById("tab-content-toggle")
         .addEventListener("click", toggleFakDropdown);
 
       renderFakultas();
