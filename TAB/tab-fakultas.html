@@ -1,0 +1,971 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      img {
+        max-width: 100%;
+        height: auto;
+      }
+
+      /* ============================================================
+       LAYOUT DASAR (disamakan dengan desain "tentang_unit")
+       ============================================================ */
+      .fak-wrapper,
+      .fak-wrapper * {
+        box-sizing: border-box;
+      }
+      .fak-wrapper {
+        --fak-sticky-top: 24px;
+
+        display: flex;
+        gap: 28px;
+        margin: 0 auto;
+        max-width: 100%;
+        overflow-x: hidden;
+        overflow-x: clip;
+        font-family: "Albert Sans", Helvetica, Arial, Lucida, sans-serif;
+      }
+
+      /* ===== Sidebar (daftar fakultas) ===== */
+      .fak-sidebar {
+        width: 260px;
+        flex-shrink: 0;
+        align-self: flex-start;
+        position: sticky;
+        top: var(--fak-sticky-top);
+        max-height: calc(100vh - var(--fak-sticky-top) - 16px);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        scrollbar-width: thin;
+      }
+      .fak-sidebar-title {
+        font-size: 14px;
+        padding-left: 22px;
+        letter-spacing: 0.14em;
+        color: #667;
+        margin-bottom: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      /* Tombol dropdown khusus HP (disembunyikan di desktop) */
+      .fak-menu-toggle {
+        display: none;
+        width: 100%;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 14px;
+        border: 0;
+        border-radius: 13px;
+        background: #eef1f7;
+        color: #012060;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1.3;
+        text-align: left;
+        cursor: pointer;
+        transition: 0.3s;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+      }
+      .fak-menu-toggle:hover {
+        background: rgba(1, 32, 96, 0.08);
+      }
+      .fak-menu-toggle.open {
+        background: #012060;
+        color: #fff;
+      }
+      .fak-menu-toggle-label {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .fak-menu-toggle-icon {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+      }
+      .fak-menu-chevron {
+        width: 14px;
+        height: 14px;
+        flex-shrink: 0;
+        transition: transform 0.3s ease;
+      }
+      .fak-menu-toggle.open .fak-menu-chevron {
+        transform: rotate(180deg);
+      }
+
+      /* Daftar fakultas: selalu tampil di desktop, jadi dropdown di HP */
+      .fak-list {
+        display: grid;
+        grid-template-rows: 1fr;
+        transition: grid-template-rows 0.3s ease;
+      }
+      .fak-list-inner {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        overflow: hidden;
+      }
+
+      .fak-btn {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        padding: 8px 12px;
+        border: 0;
+        border-radius: 13px;
+        margin-bottom: 6px;
+        /* display: flex; */
+        background: transparent;
+        cursor: pointer;
+        color: #012060;
+        font-family: inherit;
+        font-size: 16px;
+        line-height: 1.3;
+        text-align: left;
+        transition: 0.3s;
+        -webkit-tap-highlight-color: transparent;
+        touch-action: manipulation;
+      }
+      .fak-btn:hover {
+        background: #cfd4df;
+        color: #012060;
+      }
+      .fak-btn.active {
+        background: #012060;
+        font-weight: 700;
+        color: #fff;
+      }
+      .fak-btn:focus-visible {
+        outline: 3px solid #0242c6;
+        outline-offset: -3px;
+      }
+      .icon-dibagian-sidebar-link {
+        width: 28px;
+        height: 28px;
+      }
+      .fak-btn.active .icon-dibagian-sidebar-link {
+        color: #fff;
+      }
+      
+
+      /* ===== Konten ===== */
+      .fak-content {
+        flex: 1;
+        min-width: 0;
+      }
+      .fak-tab {
+        display: none;
+      }
+      .fak-tab.active {
+        display: block;
+      }
+      .fak-card {
+        background: #fff;
+        border-radius: 13px;
+        padding: 26px;
+        margin-bottom: 36px;
+      }
+
+      /* ============================================================
+       HEADER HALAMAN (nama fakultas), gaya sama seperti tentang_unit
+       ============================================================ */
+      .fak-page-header {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        padding-right: 12px;
+        background: linear-gradient(135deg, #0242c6 0%, #012060 100%);
+        border: 1px solid white;
+        border-radius: 4px;
+        color: #ffffff;
+        position: relative;
+        left: 50%;
+        margin-bottom: 30px;
+        transform: translateX(-50%);
+        font-size: 28px;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+        max-width: 100%;
+      }
+      .fak-page-header-icon {
+        background-color: #012060;
+        padding: 12px;
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .fak-page-header-icon svg {
+        width: 22px;
+        height: 22px;
+        fill: #fff;
+      }
+      .fak-page-header-text {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      /* Hero */
+      .fak-hero {
+        position: relative;
+        border-radius: 13px;
+        overflow: hidden;
+        margin-bottom: 36px;
+      }
+      .fak-hero img {
+        width: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      /* Label / badge tiap bagian kartu */
+      .fak-label {
+        display: inline-block;
+        font-size: 14px;
+        font-weight: 700;
+        padding: 6px 14px;
+        border-top-right-radius: 999px;
+        border-bottom-right-radius: 999px;
+        border-bottom-left-radius: 999px;
+        margin-bottom: 12px;
+        color: #012060;
+      }
+      .fak-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #012060;
+        margin-bottom: 12px;
+      }
+      .fak-body {
+        font-size: 16px;
+        font-weight: 500;
+        margin-top: 22px;
+        line-height: 1.75;
+        color: #2b3346;
+        text-align: justify;
+      }
+      .fak-body ul {
+        margin: 0;
+        list-style: none;
+        padding: 0;
+      }
+      .fak-body li {
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .fak-body li svg {
+        width: 32px;
+        height: 32px;
+        flex-shrink: 0;
+        color: #0242c6;
+      }
+
+      .y-badge-green {
+        background: #d3edbc;
+        border: 1px solid #94ad7e;
+      }
+      .y-badge-purple {
+        background: #e7cff3;
+        border: 1px solid #a79aad;
+      }
+      .y-badge-yellow {
+        background: #fee69d;
+        border: 1px solid #b09e6a;
+      }
+      .y-badge-blue {
+        background: #bee1f4;
+        border: 1px solid #8fa6b3;
+      }
+
+      /* ===== Kartu CTA bawah ===== */
+      .card-bawah-item {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 0;
+        border-radius: 13px;
+        background-color: #fff;
+        min-height: 110px;
+      }
+      .card-bawah-teks {
+        flex: 1;
+        padding-right: 40px;
+        position: relative;
+        z-index: 2;
+      }
+      .card-bawah-teks h3 {
+        margin: 0 0 8px;
+        color: #012060;
+        font-size: 22px;
+        padding-left: 26px;
+        font-weight: 700;
+        line-height: 1.35;
+      }
+      .card-bawah-teks p {
+        padding-left: 26px;
+        margin: 0 0 8px;
+        color: #2b3346;
+        font-size: 16px;
+        line-height: 1.55;
+      }
+      .card-bawah-gambar {
+        position: relative;
+        flex: 0 0 260px;
+        max-width: 260px;
+        border-radius: 10px;
+        overflow: hidden;
+      }
+      .card-bawah-gambar-placeholder img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        display: block;
+      }
+      .card-bawah-gambar::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        pointer-events: none;
+        background: linear-gradient(
+          90deg,
+          #ffffff 0%,
+          rgba(255, 255, 255, 0.85) 15%,
+          rgba(255, 255, 255, 0) 45%
+        );
+      }
+      @media (max-width: 700px) {
+        .card-bawah-item {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .card-bawah-teks {
+          padding-right: 0;
+          margin-bottom: 14px;
+        }
+        .card-bawah-gambar {
+          flex: 0 0 auto;
+          width: 100%;
+          max-width: 100%;
+          height: 160px;
+        }
+        .card-bawah-gambar::before {
+          background: linear-gradient(
+            180deg,
+            #ffffff 0%,
+            rgba(255, 255, 255, 0.85) 15%,
+            rgba(255, 255, 255, 0) 45%
+          );
+        }
+      }
+      .cta-fakultas {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        color: #fff;
+        background-color: #012060;
+        font-size: 15px;
+        font-weight: 700;
+        border: 1px solid #012060;
+        padding: 13px 26px;
+        margin-left: 26px;
+        border-radius: 13px;
+        cursor: pointer;
+        position: relative;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: 0.25s;
+      }
+      .cta-fakultas:hover {
+        background-color: #0242c6;
+      }
+      .cta-fakultas svg {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+        margin-left: auto;
+      }
+
+      /* ============================================================
+       RESPONSIVE — TABLET (≤ 1024px)
+       ============================================================ */
+      @media (max-width: 1024px) and (min-width: 769px) {
+        .fak-sidebar {
+          width: 210px;
+        }
+        .fak-page-header {
+          display: none;
+        }
+      }
+
+      /* ============================================================
+       RESPONSIVE — MOBILE (≤ 768px): sidebar jadi dropdown, sama
+       seperti submenu di tentang_unit — daftar vertikal yang bisa
+       dibuka/tutup, bukan scroll horizontal.
+       ============================================================ */
+      @media (max-width: 768px) {
+        .fak-wrapper {
+          flex-direction: column;
+          gap: 14px;
+        }
+        .fak-sidebar-title {
+          display: none;
+        }
+        .fak-sidebar {
+          width: 100%;
+          align-self: stretch;
+          position: sticky;
+          top: 8px;
+          z-index: 5;
+          max-height: none;
+          overflow: visible;
+        }
+        .fak-menu-toggle {
+          display: flex;
+        }
+
+        .fak-list {
+          display: grid;
+          grid-template-rows: 0fr;
+        }
+        .fak-list.open {
+          grid-template-rows: 1fr;
+        }
+        .fak-list-inner {
+          min-height: 0;
+          visibility: hidden;
+          transition: visibility 0s linear 0.3s;
+          margin-top: 6px;
+          padding: 8px;
+          background: #fff;
+          border-radius: 13px;
+          box-shadow: 0 10px 24px rgba(1, 32, 96, 0.14);
+          max-height: min(60vh, 420px);
+          overflow-y: auto;
+          -webkit-overflow-scrolling: touch;
+          overscroll-behavior: contain;
+        }
+        .fak-list.open .fak-list-inner {
+          visibility: visible;
+          transition-delay: 0s;
+        }
+
+        .fak-btn {
+          padding: 10px 12px;
+          border-radius: 10px;
+          font-size: 15px;
+        }
+
+        .fak-card {
+          padding: 16px 14px;
+          border-radius: 13px;
+          margin-bottom: 20px;
+        }
+
+        .fak-page-header {
+          display: none;
+        }
+
+        .fak-body {
+          margin-top: 18px;
+          font-size: 15px;
+        }
+        .fak-title {
+          font-size: 18px;
+        }
+      }
+
+      @media (max-width: 380px) {
+        .fak-menu-toggle {
+          font-size: 13px;
+        }
+        .fak-btn {
+          font-size: 14px;
+        }
+        .fak-card {
+          padding: 14px 10px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .fak-list,
+        .fak-list-inner,
+        .fak-menu-chevron,
+        .fak-btn,
+        .fak-menu-toggle {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ============================================================
+         SPRITE ICON: semua icon didefinisikan SEKALI di sini,
+         lalu dipakai berkali-kali lewat <use href="#id">.
+         ============================================================ -->
+    <svg style="display: none" aria-hidden="true">
+      <symbol
+        id="icon-fak"
+        width="24"
+        height="24"
+        viewBox="0 0 33 31"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M16.1742 1.22266C16.1913 1.22286 16.3549 1.52048 16.5377 1.88424C16.924 2.65297 17.3936 3.4401 17.7219 3.86918C18.1583 4.43954 19.1513 5.63941 19.4166 5.91677C19.6112 6.12031 20.4398 7.15738 20.4399 7.19749C20.4399 7.21481 20.4796 7.2721 20.5282 7.32484C20.6567 7.4642 21.2208 8.41369 21.4955 8.95275C21.737 9.42689 21.9615 10.0077 22.1112 10.5136C21.916 10.6078 21.6635 10.7305 21.3785 10.8872C20.696 11.2625 19.8173 11.8377 18.9508 12.7525C17.8092 13.9576 16.7164 15.7226 16.0974 18.3333C15.4784 15.7226 14.3856 13.9576 13.244 12.7525C12.3775 11.8377 11.4988 11.2625 10.8163 10.8872C10.595 10.7655 10.3932 10.6643 10.2227 10.5811C10.3191 10.2141 10.4405 9.8409 10.5474 9.60015C10.8163 8.99409 11.4475 7.83644 11.6723 7.53674C11.7202 7.4729 11.8844 7.24781 12.0371 7.03652C12.1898 6.82528 12.3648 6.59547 12.4258 6.52583C12.9887 5.88401 14.4102 4.15778 14.7101 3.75187C15.1576 3.1461 15.3509 2.82004 15.8034 1.90749C15.9902 1.53087 16.157 1.22266 16.1742 1.22266Z"
+          fill="currentColor"
+        />
+        <path
+          d="M22.7169 11.4822C23.2647 11.2394 24.4064 10.9246 24.4064 11.0163C24.4065 11.0378 24.4592 11.2862 24.5236 11.5682C24.588 11.8503 24.6725 12.3915 24.7113 12.7708C24.9725 15.3299 24.4615 17.5988 23.1974 19.4918C22.8775 19.971 22.1209 20.8679 21.7716 21.1821C21.4984 21.4279 20.8164 21.9506 20.7689 21.9506C20.7527 21.9506 20.6723 22.0006 20.5902 22.0617C20.0513 22.4625 18.8472 22.9518 17.9983 23.115C17.5642 23.1985 17.3699 23.2179 16.5557 23.2219C16.5582 17.9982 18.1285 15.1331 19.6777 13.5204C20.4587 12.7075 21.2507 12.1954 21.8739 11.8575C22.0452 11.7646 22.203 11.6852 22.3463 11.6155C22.3998 11.618 22.5068 11.5753 22.7169 11.4822Z"
+          fill="currentColor"
+        />
+        <path
+          d="M9.47767 11.4822C8.93734 11.2394 7.81098 10.9246 7.81098 11.0163C7.81096 11.0378 7.75895 11.2862 7.69539 11.5682C7.63183 11.8503 7.54852 12.3915 7.51028 12.7708C7.25255 15.3299 7.75669 17.5988 9.00364 19.4918C9.31929 19.971 10.0656 20.8679 10.4102 21.1821C10.6798 21.4279 11.3526 21.9506 11.3994 21.9506C11.4153 21.9506 11.4946 22.0006 11.5757 22.0617C12.1073 22.4625 13.2951 22.9518 14.1325 23.115C14.5607 23.1985 14.7524 23.2179 15.5557 23.2219C15.5532 17.9982 14.0041 15.1331 12.4758 13.5204C11.7054 12.7075 10.9241 12.1954 10.3093 11.8575C10.1403 11.7646 9.98461 11.6852 9.84333 11.6155C9.79046 11.618 9.68496 11.5753 9.47767 11.4822Z"
+          fill="currentColor"
+        />
+        <path
+          d="M29.4329 15.3329C30.9115 15.3329 32.1338 16.5404 31.877 17.9965C31.6836 19.0927 31.3709 20.1672 30.9429 21.2005C30.1724 23.0608 29.043 24.7511 27.6192 26.1749C26.1954 27.5986 24.5051 28.7281 22.6448 29.4986C21.6115 29.9266 20.537 30.2392 19.4408 30.4326C17.9848 30.6895 16.7772 29.4671 16.7772 27.9886C16.7772 26.51 17.9967 25.3463 19.4224 24.9544C19.8207 24.8449 20.2126 24.7105 20.5958 24.5518C21.8065 24.0503 22.9065 23.3153 23.8331 22.3887C24.7597 21.4621 25.4947 20.3621 25.9961 19.1515C26.1549 18.7683 26.2892 18.3764 26.3987 17.9781C26.7907 16.5524 27.9543 15.3329 29.4329 15.3329Z"
+          fill="currentColor"
+        />
+        <path
+          d="M2.67746 15.3329C1.19889 15.3329 -0.0234585 16.5404 0.2334 17.9965C0.426775 19.0927 0.739405 20.1672 1.16741 21.2005C1.93796 23.0608 3.06737 24.7511 4.49116 26.1749C5.91495 27.5986 7.60523 28.7281 9.4655 29.4986C10.4988 29.9266 11.5733 30.2392 12.6695 30.4326C14.1256 30.6895 15.3331 29.4671 15.3331 27.9886C15.3331 26.51 14.1136 25.3463 12.6879 24.9544C12.2897 24.8449 11.8977 24.7105 11.5145 24.5518C10.3039 24.0503 9.20388 23.3153 8.27729 22.3887C7.3507 21.4621 6.61569 20.3621 6.11423 19.1515C5.9555 18.7683 5.82115 18.3764 5.71166 17.9781C5.3197 16.5524 4.15604 15.3329 2.67746 15.3329Z"
+          fill="currentColor"
+        />
+      </symbol>
+
+      <symbol id="icon-arrow" viewBox="0 0 13 17">
+        <path
+          d="M3.11637 0.802671C2.17409 0.802671 1.39519 1.57215 1.55787 2.50028C1.68102 3.20295 1.88058 3.89171 2.15403 4.55399C2.64509 5.74331 3.36485 6.82395 4.27221 7.73421C5.17958 8.64447 6.25677 9.36653 7.4423 9.85916C8.09914 10.1321 8.78211 10.3317 9.47886 10.4554C10.4096 10.6206 11.1817 9.83904 11.1817 8.89375C11.1817 7.94846 10.4018 7.20459 9.49079 6.9525C9.23874 6.88275 8.99069 6.79734 8.74813 6.69654C7.9766 6.37594 7.27557 5.90603 6.68507 5.31365C6.09456 4.72126 5.62615 4.01799 5.30657 3.24399C5.20474 2.99735 5.11865 2.74507 5.04862 2.48868C4.80032 1.57971 4.05865 0.802671 3.11637 0.802671Z"
+          fill="currentColor"
+        />
+        <path
+          d="M3.11637 16.9923C2.17409 16.9923 1.39519 16.2228 1.55787 15.2946C1.68102 14.592 1.88058 13.9032 2.15403 13.2409C2.64509 12.0516 3.36485 10.971 4.27221 10.0607C5.17958 9.15045 6.25677 8.42839 7.4423 7.93576C8.09914 7.66282 8.78211 7.46327 9.47886 7.33957C10.4096 7.17433 11.1817 7.95589 11.1817 8.90117C11.1817 9.84646 10.4018 10.5903 9.49079 10.8424C9.23874 10.9122 8.99069 10.9976 8.74813 11.0984C7.9766 11.419 7.27557 11.8889 6.68507 12.4813C6.09456 13.0737 5.62615 13.7769 5.30657 14.5509C5.20474 14.7976 5.11865 15.0498 5.04862 15.3062C4.80032 16.2152 4.05865 16.9923 3.11637 16.9923Z"
+          fill="currentColor"
+        />
+        <path
+          d="M2.96094 2.31641L2.96094 15.3407"
+          stroke="currentColor"
+          stroke-width="3.04501"
+          stroke-linecap="round"
+        />
+      </symbol>
+    </svg>
+
+    <div id="fak-root" class="fak-wrapper">
+      <nav class="fak-sidebar" aria-label="Menu Fakultas">
+        <div class="fak-sidebar-title">Pilih Fakultas</div>
+
+        <button
+          type="button"
+          class="fak-menu-toggle"
+          id="fak-menu-toggle"
+          aria-expanded="false"
+          aria-controls="fak-list"
+        >
+          <svg
+            class="fak-menu-toggle-icon"
+            width="16"
+            height="16"
+            aria-hidden="true"
+          >
+            <use href="#icon-fak"></use>
+          </svg>
+          <span class="fak-menu-toggle-label" id="fak-menu-toggle-label"
+            >Pilih Fakultas</span
+          >
+        </button>
+
+        <div class="fak-list" id="fak-list">
+          <div class="fak-list-inner" id="fak-sidebar-list"></div>
+        </div>
+      </nav>
+
+      <div class="fak-content" id="fak-content"></div>
+    </div>
+
+    <script>
+      const fakultasData = [
+        {
+          id: "fip",
+          nama: "Fakultas Ilmu Pendidikan",
+          hero: "https://um.ac.id/wp-content/uploads/2026/07/fip.webp",
+          heroAlt: "Fakultas Ilmu Pendidikan",
+          tentang: `Fakultas Ilmu Pendidikan merupakan fakultas tertua dan cikal bakal berdirinya Universitas Negeri Malang. Sejarahnya dimulai pada tahun 1954 saat didirikan sebagai Perguruan Tinggi Pendidikan Guru (PTPG) Malang. FIP kemudian menjadi bagian dari Fakultas Keguruan dan Ilmu Pendidikan (FKIP) Universitas Airlangga, lalu menjadi inti dari Institut Keguruan dan Ilmu Pendidikan (IKIP) Malang pada tahun 1963. Sejak tahun 1999, FIP resmi menjadi salah satu fakultas unggulan di Universitas Negeri Malang. Secara kelembagaan, FIP terdiri dari beberapa departemen, yaitu: Departemen Bimbingan dan Konseling (BK), Departemen Teknologi Pendidikan, Departemen Manajemen Pendidikan, Departemen Pendidikan Nonformal, Departemen Kependidikan Sekolah Dasar dan Prasekolah (KSDP), Departemen Pendidikan Luar Biasa, dan Departemen Pendidikan Anak Usia Dini (PAUD).`,
+          visi: `Menjadi fakultas unggul dan rujukan bidang kependidikan yang berdaya saing global.`,
+          misi: [
+            `Menyelenggarakan pendidikan dan pembelajaran yang unggul`,
+            `Menyelenggarakan penelitian yang unggul untuk menghasilkan temuan baru dan bermanfaat bagi masyarakat`,
+            `Menyelenggarakan pengabdian kepada masyarakat yang unggul untuk memberdayakan dan menyejahterakan masyarakat di bidang kependidikan yang berdaya saing global`,
+          ],
+          karir: `FIP UM dikenal sebagai pencetak tenaga pendidik dan kependidikan profesional. Lulusannya dipersiapkan untuk menjadi guru (SD, PAUD, BK, PLB), pengelola pendidikan, pengembang kurikulum, teknisi sumber belajar, tutor, serta tenaga ahli di berbagai lembaga pendidikan formal dan nonformal.`,
+          ctaLink: "https://fip.um.ac.id/",
+          ctaGambar: "https://um.ac.id/wp-content/uploads/2026/07/fip-1.webp",
+        },
+        {
+          id: "fs",
+          nama: "Fakultas Sastra",
+          hero: "https://um.ac.id/wp-content/uploads/2026/07/sastra-scaled.webp",
+          heroAlt: "Fakultas Sastra",
+          tentang: `Fakultas Sastra Universitas Negeri Malang (FS UM) merupakan unit akademik yang berfokus pada pengembangan pendidikan, penelitian, dan pengabdian di bidang bahasa, sastra, seni, dan desain, dengan komitmen mencetak lulusan yang beriman, berilmu, kreatif, dan bertanggung jawab. Berakar dari pendirian Jurusan Bahasa Indonesia dan Bahasa Inggris pada tahun 1954, FS UM terus berkembang hingga kini mengelola berbagai program studi dari jenjang diploma hingga doktoral dalam lima departemen utama. Melalui Rencana Strategis 2022–2026, FS UM menargetkan peningkatan kualitas lulusan, dosen, kurikulum, tata kelola, serta kinerja keuangan untuk menjadi fakultas unggul dan rujukan di tingkat nasional maupun internasional.`,
+          visi: `Menjadi fakultas unggul dan rujukan di tingkat nasional dan internasional dalam bidang bahasa, sastra, sain informasi, seni, desain dan kependidikan.`,
+          misi: [
+            `Menyelenggarakan pendidikan dan pembelajaran dalam bidang bahasa, sastra, sain informasi, seni, desain, dan kependidikan yang inovatif berbasis riset dengan memanfaatkan teknologi informasi untuk menghasilkan lulusan yang berkarakter serta berdaya saing nasional dan internasional.`,
+            `Menyelenggarakan dan memfasilitasi penelitian bidang bahasa, sastra, sain informasi, seni, desain, dan kependidikan dalam memajukan ilmu pengetahuan, teknologi, dan kebudayaan nasional untuk meningkatkan kesejahteraan bangsa serta mendapatkan pengakuan nasional dan internasional.`,
+            `Menyelenggarakan dan memfasilitasi Pengabdian Kepada Masyarakat bidang bahasa, sastra, sain informasi, seni, desain, dan kependidikan sebagai pengamalan dan pembudayaan ilmu pengetahuan dan teknologi untuk mencerdaskan kehidupan dan meningkatkan kesejahteraan bangsa.`,
+            `Menyelenggarakan tata pamong fakultas yang tangguh, efisien, akuntabel, dan transparan yang berbasis teknologi informasi dengan memperkuat kemitraan dalam rangka meningkatkan kualitas berkelanjutan menuju kemandirian.`,
+          ],
+          karir: `Lulusan dipersiapkan berkarier sebagai guru, dosen, peneliti, dan tenaga profesional. Memiliki peluang di industri bahasa dan komunikasi sebagai penerjemah, editor, penulis, dan content creator. Kompetensi yang dibangun membuka akses luas ke industri kreatif seperti desain grafis, animasi, dan seni pertunjukan. Di bidang informasi, lulusan berperan sebagai pustakawan, arsiparis, dan pengelola data digital. Penguatan kewirausahaan mendorong lulusan menjadi entrepreneur di sektor kreatif, edukasi, dan digital.`,
+          ctaLink: "https://sastra.um.ac.id/",
+          ctaGambar:
+            "https://um.ac.id/wp-content/uploads/2026/07/sastra-1.webp",
+        },
+        {
+          id: "fmipa",
+          nama: "Fakultas MIPA",
+          hero: "https://um.ac.id/wp-content/uploads/2026/07/fmipa-2-scaled.webp",
+          heroAlt: "Fakultas MIPA",
+          tentang: `FMIPA UM berawal dari Jurusan Ilmu Pasti Alam di PTPG Malang yang didirikan pada 18 Oktober 1954 dengan 28 mahasiswa. Seiring perkembangan, lembaga ini berubah dari PTPG menjadi bagian FKIP Universitas Airlangga, lalu menjadi IKIP Malang pada 1963. Pada 1981, FKIE berubah menjadi FPMIPA dengan empat jurusan utama: Matematika, Fisika, Kimia, dan Biologi. Tahun 1999, IKIP Malang menjadi Universitas Negeri Malang dan FPMIPA berganti nama menjadi FMIPA. Saat ini, FMIPA memiliki 25 program studi jenjang S1, S2, dan S3 yang dikelola dalam enam departemen.`,
+          visi: `Pada tahun 2030 menjadi fakultas unggul dan rujukan dalam pembelajaran, penelitian, inovasi, dan pengabdian masyarakat bidang MIPA, kependidikan MIPA, dan gizi di Asia Tenggara.`,
+          misi: [
+            `Menyelenggarakan pendidikan dan pembelajaran yang berpusat pada peserta didik, menggunakan pendekatan pembelajaran yang efektif, multidisiplin/interdisiplin/transdisiplin, berwawasan global, dan mengoptimalkan pemanfaatan teknologi.`,
+            `Menyelenggarakan penelitian dan inovasi bidang MIPA, Pendidikan MIPA, dan gizi yang bermanfaat bagi pengembangan ilmu serta berdampak global bagi tercapainya pembangunan berkelanjutan dan kesejahteraan masyarakat.`,
+            `Menyelenggarakan pengabdian kepada masyarakat yang berorientasi pada pemberdayaan masyarakat melalui penerapan penelitian bidang MIPA, Pendidikan MIPA, dan gizi.`,
+          ],
+          karir: `FMIPA berkomitmen menghasilkan lulusan yang kompeten, berakhlak mulia, mandiri, dan inovatif. Lulusan juga dibekali kemampuan berkolaborasi secara global serta berkembang secara profesional. Inovasi yang dihasilkan diarahkan agar unggul dan berdampak secara global. Pengabdian kepada masyarakat dilakukan melalui penerapan hasil riset untuk mewujudkan masyarakat yang mandiri, produktif, dan sejahtera.`,
+          ctaLink: "https://fmipa.um.ac.id/",
+          ctaGambar: "https://um.ac.id/wp-content/uploads/2026/07/fmipa.webp",
+        },
+        {
+          id: "feb",
+          nama: "Fakultas Ekonomi dan Bisnis",
+          hero: "https://um.ac.id/wp-content/uploads/2026/07/feb-scaled.webp",
+          heroAlt: "Fakultas Ekonomi dan Bisnis",
+          tentang: `Fakultas Ekonomi dan Bisnis UM berkembang dari Jurusan Pendidikan Dunia Usaha (PDU) yang merupakan gabungan Ekonomi Umum dan Pendidikan Bisnis. Pada tahun 1996, PDU berubah menjadi Jurusan Pendidikan Ekonomi dengan empat konsentrasi: Koperasi, Akuntansi, Tata Niaga, dan Administrasi Perkantoran. Seiring perubahan IKIP Malang menjadi Universitas Negeri Malang pada 1999, dibuka program studi nonkependidikan seperti Manajemen, Akuntansi, dan Manajemen Pemasaran. FEB UM terus berkembang dengan penambahan program studi S1, D-III, hingga pascasarjana, serta penguatan organisasi sebagai salah satu fakultas utama di lingkungan UM.`,
+          visi: `Menjadi Fakultas yang unggul dan rujukan bidang kependidikan dan non kependidikan dalam pengembangan Ilmu Ekonomi, Manajemen, Bisnis, Akuntansi di lingkup Nasional dan Internasional.`,
+          misi: [
+            `Menyelenggarakan pendidikan dan pembelajaran yang unggul dan rujukan bidang kependidikan dan non kependidikan Ilmu Ekonomi, Manajemen, Bisnis, Akuntansi.`,
+            `Menyelenggarakan penelitian yang unggul dan rujukan untuk menghasilkan temuan baru dan bermanfaat bagi masyarakat dalam bidang kependidikan dan non-kependidikan Ilmu Ekonomi, Manajemen, Bisnis, Akuntansi.`,
+            `Menyelenggarakan pengabdian kepada masyarakat yang unggul dan rujukan untuk memberdayakan dan menyejahterakan masyarakat bidang kependidikan dan non kependidikan Ilmu Ekonomi, Manajemen, Bisnis, Akuntansi.`,
+          ],
+          karir: `Lulusan FEB UM memiliki peluang menjadi pendidik sebagai guru dan dosen di bidang ekonomi, bisnis, manajemen, akuntansi, dan administrasi perkantoran. Mereka juga siap menjadi pengusaha serta inovator bisnis yang kreatif dan kompetitif di pasar global. Lulusan memiliki peluang berkarier sebagai praktisi profesional di berbagai sektor, termasuk perbankan, industri, konsultan, serta instansi pemerintah dan BUMN.`,
+          ctaLink: "https://feb.um.ac.id/",
+          ctaGambar: "https://um.ac.id/wp-content/uploads/2026/07/feb-1.webp",
+        },
+        {
+          id: "ft",
+          nama: "Fakultas Teknik",
+          hero: "https://um.ac.id/wp-content/uploads/2026/07/ft-scaled.webp",
+          heroAlt: "Fakultas Teknik",
+          tentang: `Fakultas Teknik UM pertama kali didirikan pada 1 September 1965 dengan nama Fakultas Keguruan Teknik (FKT). Seiring perkembangan UM, FKT berubah menjadi Fakultas Pendidikan Teknologi Kejuruan (FPTK) pada tahun 1981 dan menjadi Fakultas Teknik (FT) pada tahun 1999. Kini Fakultas Teknik semakin maju dan berkembang dengan slogan "Engineers of Change Shaping the Future".`,
+          visi: `Menjadi Fakultas Yang Unggul dan Menjadi Rujukan Ilmu Pengetahuan dan Teknologi Dalam Bidang Pendidikan Akademik dan Profesi.`,
+          misi: [
+            `Menyelenggarakan Pendidikan Akademik, Vokasi, dan Profesi Yang Menghasilkan Lulusan Cerdas Dan Kompetitif, serta Memiliki Karakter Yang Baik (Good Character) dengan Memanfaatkan Teknologi dan Metode Pembelajaran Yang Efektif.`,
+            `Menyelenggarakan Penelitian Dalam Bidang Kependidikan dan Rekayasa Untuk Menghasilkan Inovasi Yang Implementatif dan Ramah Lingkungan Berbasis Teknologi Cerdas (Smart Technology) Yang Bermanfaat Bagi Pengembangan Ilmu Pengetahuan dan Aplikasinya.`,
+            `Menyelenggarakan Pengabdian Kepada Masyarakat Yang Berorientasi Pada Penerapan Inovasi dan Teknologi Hasil-hasil Penelitian Untuk Meningkatkan Keunggulan, Produktivitas, dan Kesejahteraan Masyarakat.`,
+            `Menyelenggarakan Tatakelola Yang Akuntabel dan Transparan Yang Menjamin Peningkatan Kualitas dan Terwujudnya Layanan Prima dengan Memanfaatkan Teknologi.`,
+          ],
+          karir: `Menghasilkan lulusan cerdas, kompetitif, berakhlak mulia, mandiri, dan memiliki komitmen kebangsaan. Lulusan dibekali kompetensi akademik dan/atau profesional agar mampu berkembang secara berkelanjutan. Pengabdian kepada masyarakat diperkuat melalui penerapan hasil riset untuk meningkatkan produktivitas dan kesejahteraan.`,
+          ctaLink: "https://ft.um.ac.id/",
+          ctaGambar: "https://um.ac.id/wp-content/uploads/2026/07/ft-1.webp",
+        },
+        {
+          id: "fik",
+          nama: "Fakultas Ilmu Keolahragaan",
+          hero: "https://um.ac.id/wp-content/uploads/2026/07/fik-scaled.webp",
+          heroAlt: "Fakultas Ilmu Keolahragaan",
+          tentang: `Fakultas Ilmu Keolahragaan UM memiliki komitmen kuat dalam mencetak lulusan yang profesional, berintegritas, dan adaptif terhadap perkembangan ilmu pengetahuan dan teknologi, khususnya dalam ranah pendidikan jasmani, kesehatan, rekreasi, kepelatihan olahraga, hingga ilmu keolahragaan yang berbasis sains dan riset.`,
+          visi: `Menjadi Fakultas Ilmu Keolahragaan unggul dan rujukan kependidikan, ilmu pengetahuan dan teknologi dalam bidang keolahragaan, kesehatan masyarakat, pendidikan jasmani dan kepelatihan olahraga di Indonesia pada Tahun 2030.`,
+          misi: [
+            `Menyelenggarakan pendidikan dan pembelajaran unggul yang berpusat pada peserta didik, menggunakan pendekatan pembelajaran yang efektif, dan mengoptimalkan pemanfaatan teknologi dalam bidang keolahragaan, kesehatan masyarakat, pendidikan jasmani dan kepelatihan olahraga.`,
+            `Menyelenggarakan penelitian unggul dalam bidang keolahragaan, kesehatan masyarakat, pendidikan jasmani dan kepelatihan olahraga berbasis ilmu pengetahuan dan teknologi yang menghasilkan temuan baru serta bermanfaat bagi pengembangan ilmu dan kesejahteraan masyarakat.`,
+            `Menyelenggarakan pengabdian kepada masyarakat unggul yang berorientasi pada pemberdayaan dan kesejahteraan masyarakat melalui penerapan ilmu pengetahuan dan teknologi dalam bidang keolahragaan, kesehatan masyarakat, pendidikan jasmani dan kepelatihan olahraga.`,
+          ],
+          karir: `Instruktur fitness, pelatih, guru, sport masseur, jurnalis olahraga, staff instansi olahraga, TNI, POLRI, penyuluh kesehatan, tenaga administrasi rumah sakit, ahli kesehatan dan keselamatan kerja, konsultan gizi masyarakat, peneliti, dosen/tenaga kependidikan.`,
+          ctaLink: "https://fik.um.ac.id/",
+          ctaGambar: "https://um.ac.id/wp-content/uploads/2026/07/fik-1.webp",
+        },
+        {
+          id: "fis",
+          nama: "Fakultas Ilmu Sosial",
+          hero: "https://um.ac.id/wp-content/uploads/2026/07/sosial-scaled.webp",
+          heroAlt: "Fakultas Ilmu Sosial",
+          tentang: `Fakultas Ilmu Sosial (FIS) kembali berdiri pada 17 Agustus 2009 berdasarkan Keputusan Rektor Universitas Negeri Malang No. 047/KEP/H32/OT/2009. Sebelumnya, FIS bernama Fakultas Pendidikan Ilmu Pengetahuan Sosial (FPIPS) yang menaungi beberapa jurusan seperti Pendidikan Ekonomi, Sejarah, Geografi, dan PPKn. Seiring kebutuhan pengembangan ilmu sosial, beberapa jurusan seperti Hukum dan Kewarganegaraan, Geografi, dan Sejarah kembali digabung dalam Fakultas Ilmu Sosial. Saat ini, FIS mengelola program studi yang mencakup jenjang S1, S2, dan S3 di berbagai bidang ilmu sosial.`,
+          visi: `Menjadi Fakultas unggulan dan rujukan dalam pembelajaran, penelitian, dan pengabdian kepada masyarakat bidang ilmu sosial, baik di tingkat nasional dan internasional.`,
+          misi: [
+            `Menyelenggarakan Pendidikan dan Pembelajaran yang berkualitas tinggi untuk mengembangkan potensi dan kepribadian mahasiswa yang unggul secara nasional dan regional.`,
+            `Menyelenggarakan penelitian untuk memajukan ilmu pengetahuan dan teknologi, meningkatkan kesejahteraan masyarakat, dan mendapatkan pengakuan nasional dan internasional.`,
+            `Menyelenggarakan pengabdian kepada masyarakat sebagai pengamalan dan pembudayaan ilmu pengetahuan dan teknologi untuk memajukan kesejahteraan masyarakat dan mencerdaskan kehidupan bangsa.`,
+            `Menyelenggarakan tata pamong yang tangguh, akuntabel, dan transparan dan memperkuat kemitraan dalam rangka meningkatkan kualitas berkelanjutan.`,
+          ],
+          karir: `Lulusan memiliki peluang karier di sektor pemerintahan sebagai ASN, termasuk guru, dosen, tenaga administrasi, dan tenaga fungsional pendidikan. Tersedia profesi seperti kurator, arsiparis, notaris, advokat, dan perbankan. Di sektor swasta, lulusan dapat berkarier di bidang HRD, public relations, marketing, dan media komunikasi. Bidang kreatif dan digital juga terbuka, seperti content creator, jurnalis, GIS analyst, perencanaan wilayah, dan sektor pariwisata.`,
+          ctaLink: "https://fis.um.ac.id/",
+          ctaGambar: "https://um.ac.id/wp-content/uploads/2026/07/fis.webp",
+        },
+        {
+          id: "fpsi",
+          nama: "Fakultas Psikologi",
+          hero: "https://um.ac.id/wp-content/uploads/2026/07/fpsi-scaled.webp",
+          heroAlt: "Fakultas Psikologi",
+          tentang: `Fakultas Psikologi UM memiliki satu departemen, yaitu Departemen Psikologi, dengan empat program studi: S1, Profesi Psikolog, S2, dan S3 Psikologi Pendidikan. Pengembangan card-bawah perguruan tinggi didukung oleh lima Kelompok Bidang Keahlian (KBK) yang meliputi Psikologi Pendidikan, Sosial, Perkembangan, Industri dan Organisasi, serta Klinis. Berdasarkan pemeringkatan EduRank dan Scimago, Psikologi UM termasuk dalam jajaran lima besar nasional serta memiliki peringkat di tingkat Asia dan dunia.`,
+          visi: `Menjadi fakultas psikologi yang unggul dan menjadi rujukan secara nasional dan internasional untuk pendidikan karakter berbasis psikologi pendidikan, psikologi sosial, psikologi industri dan organisasi, psikologi perkembangan, dan psikologi klinis.`,
+          misi: [
+            `Mengembangkan ilmu psikologi ke dalam praktek pendidikan dan pengajaran inovatif untuk mengembangkan karakter Indonesia (ketuhanan, kemanusiaan, persatuan Indonesia, kerakyatan, dan keadilan sosial).`,
+            `Mengembangkan penelitian dan publikasi psikologi terkait pendidikan karakter berbasis kelompok bidang keahlian pada tingkat nasional dan internasional yang memiliki kebermanfaatan bagi masyarakat.`,
+            `Menyelenggarakan kegiatan pengabdian dan pelayanan psikologi bagi masyarakat terkait isu-isu pengembangan karakter keindonesiaan.`,
+            `Menyelenggarakan tata pamong yang otonom, akuntabel, dan transparan untuk peningkatan card-bawah perguruan tinggi di bidang psikologi secara berkelanjutan.`,
+          ],
+          karir: `Institusi bertujuan menghasilkan lulusan yang kompeten di bidang psikologi dengan karakter berlandaskan nilai ketuhanan, kemanusiaan, persatuan, kerakyatan, dan keadilan sosial. Pengembangan ilmu diarahkan pada peningkatan pengabdian kepada masyarakat berbasis penelitian untuk mendukung kesejahteraan komunitas. Institusi menekankan kinerja yang otonom, akuntabel, dan transparan guna menjamin peningkatan kesejahteraan secara berkelanjutan.`,
+          ctaLink: "https://fpsi.um.ac.id/",
+          ctaGambar: "https://um.ac.id/wp-content/uploads/2026/07/fpsi-1.webp",
+        },
+        {
+          id: "fv",
+          nama: "Fakultas Vokasi",
+          hero: "https://um.ac.id/wp-content/uploads/2026/07/vokasi-1-scaled.webp",
+          heroAlt: "Fakultas Vokasi",
+          tentang: `Fakultas Vokasi UM berawal dari program diploma yang telah ada sejak 1997 dan tersebar di beberapa fakultas. Tahun 2022, seluruh program D3 ditingkatkan menjadi D4 atau Sarjana Terapan sesuai kebijakan nasional. Fakultas Vokasi UM resmi berdiri pada 28 Februari 2023 melalui keputusan rektor. Fakultas ini mengintegrasikan 11 program studi D4 untuk mencetak lulusan terapan yang siap kerja dan berdaya saing global.`,
+          visi: `Menjadi fakultas yang unggul dan menjadi rujukan dalam pengembangan ilmu bisnis, seni, dan teknik terapan pada lingkup nasional dan internasional.`,
+          misi: [
+            `Menyelenggarakan pendidikan dan pembelajaran bidang bisnis, seni, dan teknik terapan dengan standar nasional dan internasional, berpusat pada peserta didik, menggunakan pendekatan pembelajaran yang efektif, serta mengoptimalkan pemanfaatan teknologi informasi.`,
+            `Menyelenggarakan penelitian dalam bidang bisnis, seni, dan teknik terapan pada lingkup nasional dan internasional yang bermanfaat bagi pengembangan ilmu dan kesejahteraan masyarakat.`,
+            `Menyelenggarakan pengabdian kepada masyarakat yang berorientasi pada pemberdayaan masyarakat berbasis penerapan ilmu bisnis, seni, dan teknik terapan.`,
+            `Menyelenggarakan tata pamong dan tata kelola kelembagaan yang akuntabel, kredibel dan transparan, serta menjamin peningkatan kualitas berkelanjutan.`,
+          ],
+          karir: `Lulusan Sarjana Terapan di bidang akuntansi dan pemasaran memiliki peluang karier di sektor bisnis, keuangan, dan pemasaran digital, serta dapat menjadi wirausaha. Bidang rekayasa manufaktur, otomotif, dan energi mempersiapkan lulusan berkarier sebagai engineer, konsultan, maupun technopreneur. Lulusan sistem elektronika memiliki prospek di bidang IoT, robotika, dan telekomunikasi. Bidang tata boga dan desain mode membuka peluang di industri kuliner dan fashion. Lulusan animasi dan perpustakaan digital memiliki peluang di industri kreatif dan pengelolaan data digital.`,
+          ctaLink: "https://fv.um.ac.id/",
+          ctaGambar:
+            "https://um.ac.id/wp-content/uploads/2026/07/vokasi-2.webp",
+        },
+        {
+          id: "fk",
+          nama: "Fakultas Kedokteran",
+          hero: "https://um.ac.id/wp-content/uploads/2026/07/fk-scaled.webp",
+          heroAlt: "Fakultas Kedokteran",
+          tentang: `Fakultas Kedokteran Universitas Negeri Malang (FK UM) merupakan fakultas baru yang hadir untuk mengembangkan ilmu kedokteran dan kesehatan olahraga (sport medicine). Fakultas ini memiliki visi menjadi pusat unggulan dalam pengembangan ilmu kedokteran, dengan tujuan mencetak tenaga medis profesional yang kompeten tidak hanya dalam pelayanan kesehatan umum, tetapi juga dalam aspek promotif dan preventif.`,
+          visi: `Menjadi Fakultas Kedokteran yang Unggul Khususnya Bidang Kedokteran dan Kesehatan Olahraga yang tercapai pada tahun 2031.`,
+          misi: [
+            `Menyelenggarakan pendidikan dan pengajaran yang unggul pada bidang kedokteran dan kesehatan olahraga.`,
+            `Menyelenggarakan penelitian yang unggul untuk menghasilkan temuan baru dan bermanfaat bagi masyarakat di bidang Kedokteran dan Kesehatan Olahraga.`,
+            `Menyelenggarakan pengabdian kepada masyarakat yang unggul untuk memberdayakan dan menyejahterakan masyarakat di bidang Kedokteran dan Kesehatan Olahraga.`,
+            `Menyelenggarakan tata pamong tingkat fakultas yang otonom, akuntabel, transparan dan bertanggung jawab yang menjamin peningkatan kualitas Tri Dharma Perguruan Tinggi yang berkelanjutan di bidang Kedokteran dan Kesehatan Olahraga.`,
+          ],
+          karir: `Prospek lulusan Fakultas Kedokteran UM sangat baik karena tenaga kesehatan selalu dibutuhkan. Lulusan kedokteran dapat menjadi dokter umum, melanjutkan spesialis, membuka praktik, atau bekerja di instansi dan penelitian. Lulusan keperawatan memiliki peluang sebagai perawat profesional di rumah sakit, klinik, hingga luar negeri. Lulusan kebidanan berperan dalam pelayanan kesehatan ibu dan anak, baik di fasilitas kesehatan maupun praktik mandiri.`,
+          ctaLink: "https://fk.um.ac.id/",
+          ctaGambar: "https://um.ac.id/wp-content/uploads/2026/07/fk-1.webp",
+        },
+        {
+          id: "pasca",
+          nama: "Sekolah Pascasarjana",
+          hero: "https://um.ac.id/wp-content/uploads/2026/07/pasca-1-scaled.webp",
+          heroAlt: "Sekolah Pascasarjana",
+          tentang: `Program Pendidikan Doktor di IKIP Malang (kini Universitas Negeri Malang) dirintis sejak 1968 melalui Program Sarjana Purna bekerja sama dengan Ford Foundation. Pada 1976, program ini berkembang menjadi Program Studi Pendidikan Doktor (PSPD). Perkuliahan doktor pertama dibuka pada 1 Februari 1976 dan terus berkembang ke berbagai bidang. Sejak 1980, program pascasarjana juga mencakup jenjang Magister (S2). Secara kelembagaan, program ini berubah menjadi Program Pascasarjana dan Doktor (1982), Fakultas Pascasarjana (1983), dan sejak 1990 menjadi Program Pascasarjana (PPs).`,
+          visi: `Menjadi sekolah pascasarjana dan pendidikan profesi yang unggul serta menjadi rujukan dalam program pendidikan multidisiplin.`,
+          misi: [
+            `Menyelenggarakan pendidikan berkarakter dan pembelajaran berbasis kehidupan yang mengembangkan kemandirian belajar, kemampuan berpikir kritis dan kreatif dengan menggunakan pendekatan pembelajaran yang efektif, dan mengoptimalkan pemanfaatan teknologi.`,
+            `Menyelenggarakan penelitian yang bermanfaat bagi pengembangan ilmu pengetahuan, teknologi, kependidikan multidisiplin, dan kesejahteraan masyarakat.`,
+            `Menyelenggarakan pengabdian kepada masyarakat yang berorientasi pada pemberdayaan masyarakat melalui penerapan ilmu pengetahuan, teknologi, dan bidang kependidikan.`,
+            `Menyelenggarakan tata pamong yang otonom, akuntabel, dan transparan untuk peningkatan kualitas berkelanjutan.`,
+          ],
+          karir: `Menghasilkan lulusan yang kompeten secara akademik dan profesional, berakhlak mulia, mandiri, serta memiliki komitmen kebangsaan. Lulusan diharapkan mampu berkembang secara berkelanjutan sesuai tuntutan zaman. Pengabdian kepada masyarakat diarahkan untuk mendukung pendidikan, mencerdaskan kehidupan bangsa, dan meningkatkan kesejahteraan masyarakat.`,
+          ctaLink: "https://pasca.um.ac.id/",
+          ctaGambar: "https://um.ac.id/wp-content/uploads/2026/07/pasca.webp",
+        },
+      ];
+      // ============================================================
+      // RENDER: sidebar & konten dibangun dari fakultasData di atas,
+      // dengan interaksi dropdown yang sama seperti tentang_unit.html
+      // (tombol toggle + daftar vertikal yang bisa dibuka/tutup di HP).
+      // ============================================================
+      function renderFakultas() {
+        const sidebarList = document.getElementById("fak-sidebar-list");
+        const content = document.getElementById("fak-content");
+
+        sidebarList.innerHTML = "";
+        content.innerHTML = "";
+
+        fakultasData.forEach((f, idx) => {
+          // --- tombol daftar fakultas ---
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "fak-btn" + (idx === 0 ? " active" : "");
+          btn.dataset.target = f.id;
+          btn.innerHTML = `
+            <svg class="icon-dibagian-sidebar-link"><use href="#icon-fak"></use></svg>
+            <span>${f.nama}</span>
+          `;
+          btn.addEventListener("click", () => setActiveFakultas(f.id));
+          sidebarList.appendChild(btn);
+
+          // --- daftar misi ---
+          const misiHtml = f.misi
+            .map(
+              (item) => `
+                <li>
+                  <svg class="li-icon" width="12" height="15"><use href="#icon-fak"></use></svg>
+                  ${item}
+                </li>`,
+            )
+            .join("");
+
+          // --- panel konten ---
+          const tab = document.createElement("div");
+          tab.className = "fak-tab" + (idx === 0 ? " active" : "");
+          tab.id = "c-" + f.id;
+          tab.innerHTML = `
+            <div class="fak-card">
+              <div class="fak-page-header">
+                <span class="fak-page-header-icon">
+                  <svg width="16"
+            height="16"><use href="#icon-fak"></use></svg>
+                </span>
+                <span class="fak-page-header-text">${f.nama}</span>
+              </div>
+
+              <div class="fak-hero">
+                <img src="${f.hero}" alt="${f.heroAlt || ""}" />
+              </div>
+
+              <div class="fak-label y-badge-yellow">Tentang</div>
+              <div class="fak-title">Profil Singkat</div>
+              <div class="fak-body">${f.tentang}</div>
+            </div>
+
+            <div class="fak-card">
+              <div class="fak-label y-badge-blue">Arah &amp; Tujuan</div>
+              <div class="fak-title">Visi</div>
+              <div class="fak-body">${f.visi}</div>
+            </div>
+
+            <div class="fak-card">
+              <div class="fak-label y-badge-green">Komitmen</div>
+              <div class="fak-title">Misi</div>
+              <div class="fak-body">
+                <ul>${misiHtml}</ul>
+              </div>
+            </div>
+
+            <div class="fak-card">
+              <div class="fak-label y-badge-purple">Masa Depan</div>
+              <div class="fak-title">Prospek Karir</div>
+              <div class="fak-body">${f.karir}</div>
+            </div>
+
+            <div class="card-bawah-item">
+              <div class="card-bawah-teks">
+                <h3>Pelajari lebih lanjut tentang ${f.nama}</h3>
+                <p>
+                  Temukan informasi lengkap mengenai program studi, pendaftaran,
+                  fasilitas, dan kegiatan akademik.
+                </p>
+                <a href="${f.ctaLink}" target="_blank" class="cta-fakultas">
+                  Lihat Selengkapnya
+                  <svg width="13" height="17"><use href="#icon-arrow"></use></svg>
+                </a>
+              </div>
+              <div class="card-bawah-gambar">
+                <div class="card-bawah-gambar-placeholder">
+                  <img
+                    src="${f.ctaGambar}"
+                    alt=""
+                    onerror="this.style.display='none'; this.parentElement.textContent='Gambar 1';"
+                  />
+                </div>
+              </div>
+            </div>
+          `;
+          content.appendChild(tab);
+        });
+
+        // Label tombol dropdown di HP mengikuti nama fakultas yang aktif
+        const firstActive = fakultasData[0];
+        if (firstActive) {
+          document.getElementById("fak-menu-toggle-label").textContent =
+            firstActive.nama;
+        }
+      }
+
+      const isMobileView = () =>
+        window.matchMedia("(max-width: 768px)").matches;
+
+      function setActiveFakultas(id) {
+        document
+          .querySelectorAll(".fak-btn")
+          .forEach((b) =>
+            b.classList.toggle("active", b.dataset.target === id),
+          );
+        document
+          .querySelectorAll(".fak-tab")
+          .forEach((t) => t.classList.toggle("active", t.id === "c-" + id));
+
+        // Perbarui label tombol dropdown di HP, seperti tampilan "select"
+        const item = fakultasData.find((f) => f.id === id);
+        const label = document.getElementById("fak-menu-toggle-label");
+        if (item && label) label.textContent = item.nama;
+
+        // Di HP, tutup dropdown begitu satu fakultas dipilih supaya
+        // kontennya langsung terlihat, sama seperti perilaku di tentang_unit.html
+        if (isMobileView()) {
+          closeFakDropdown();
+          const panel = document.getElementById("c-" + id);
+          const toggle = document.getElementById("fak-menu-toggle");
+          if (panel && toggle) {
+            const offset = toggle.getBoundingClientRect().bottom + 8;
+            const top = panel.getBoundingClientRect().top;
+            if (top < offset) {
+              window.scrollTo({
+                top: window.scrollY + top - offset,
+                behavior: window.matchMedia("(prefers-reduced-motion: reduce)")
+                  .matches
+                  ? "auto"
+                  : "smooth",
+              });
+            }
+          }
+        }
+      }
+
+      // Toggle dropdown fakultas (khusus tampilan HP)
+      function openFakDropdown() {
+        document.getElementById("fak-list").classList.add("open");
+        document.getElementById("fak-menu-toggle").classList.add("open");
+        document
+          .getElementById("fak-menu-toggle")
+          .setAttribute("aria-expanded", "true");
+      }
+      function closeFakDropdown() {
+        document.getElementById("fak-list").classList.remove("open");
+        document.getElementById("fak-menu-toggle").classList.remove("open");
+        document
+          .getElementById("fak-menu-toggle")
+          .setAttribute("aria-expanded", "false");
+      }
+      function toggleFakDropdown() {
+        const isOpen = document
+          .getElementById("fak-list")
+          .classList.contains("open");
+        if (isOpen) closeFakDropdown();
+        else openFakDropdown();
+      }
+
+      document
+        .getElementById("fak-menu-toggle")
+        .addEventListener("click", toggleFakDropdown);
+
+      renderFakultas();
+    </script>
+  </body>
+</html>
