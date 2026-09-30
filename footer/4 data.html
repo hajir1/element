@@ -1,0 +1,86 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+.um-topbar{
+
+    font-size:18px;
+}
+
+.um-topbar .um-topbar__list{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:28px;
+}
+
+.um-topbar .um-topbar__entry{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  	flex-wrap:wrap;
+    color:#fff;
+}
+
+.um-topbar .um-topbar__icon{
+    
+    color:#fff500;
+    font-size:18px;
+    width:16px;
+    text-align:center;
+}
+
+.um-topbar .um-topbar__link{
+    color:#fff !important;
+    text-decoration:none;
+    font-weight:700;
+    transition:.3s;
+}
+
+.um-topbar .um-topbar__link:hover{
+    color:#ffffff;
+}
+
+@media(max-width:768px){
+    .um-topbar .um-topbar__list{
+        flex-direction:column;
+        justify-content:flex-start;
+        align-items:flex-start;
+        text-align:left;
+        gap:12px;
+        width:100%;
+    }
+
+    .um-topbar .um-topbar__entry{
+        width:100%;
+        justify-content:flex-start;
+    }
+}
+</style>
+
+<div class="um-topbar">
+    <div class="um-topbar__list">
+
+        <div class="um-topbar__entry">
+            <i class="fas fa-envelope um-topbar__icon"></i>
+            <a class="um-topbar__link" href="mailto:ppid@um.ac.id">ppid@um.ac.id</a> |
+            <a class="um-topbar__link" href="mailto:humas@um.ac.id">humas@um.ac.id</a>
+        </div>
+
+        <div class="um-topbar__entry">
+            <i class="fas fa-phone um-topbar__icon"></i>
+            <a class="um-topbar__link" href="tel:+62341551312">(0341) 551312</a>
+        </div>
+
+        <div class="um-topbar__entry">
+            <i class="fas fa-user-graduate um-topbar__icon"></i>
+            <a class="um-topbar__link" href="#">Prof. Dr. Hariyono, M.Pd</a>
+        </div>
+
+        <div class="um-topbar__entry">
+            <i class="fas fa-calendar um-topbar__icon"></i>
+            <a class="um-topbar__link" href="#">18 Oktober 1954</a>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,260 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Footer UM</title>
+
+    <style>
+
+      .umf-footer-um {
+        background: #012060;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .umf-footer-container {
+        margin: auto;
+        position: relative;
+        z-index: 2;
+      }
+
+      /* CARD INFO */
+
+      .umf-top-card {
+        background: linear-gradient(90deg, #012060, #172777);
+        border-radius: 15px;
+        padding: 25px 40px;
+        margin-bottom: 30px;
+      }
+
+      .umf-logo-area {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 15px;
+        margin-bottom: 20px;
+      }
+
+      .umf-logo-area img {
+        height: 45px;
+      }
+
+      .umf-contact-row {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 20px;
+      }
+
+      .umf-contact-item {
+        color: #fff;
+        font-size: 14px;
+      }
+
+      /* MENU */
+
+      .umf-menu-card {
+        background: #7a2958;
+        border-radius: 15px;
+        padding: 35px;
+      }
+
+      .umf-menu-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 30px;
+      }
+
+      .umf-menu-col hr {
+        border: none;
+        height: 2px;
+        background: #8d5d76;
+        margin-bottom: 20px;
+      }
+
+      .umf-menu-col a {
+        display: block;
+        color: white !important;
+        text-decoration: none;
+        font-size: 14px;
+        margin-bottom: 14px;
+        line-height: 1.5;
+      }
+
+      .umf-menu-col a:hover {
+        color: white !important;
+      }
+
+      .umf-menu-col hr {
+        border: 0;
+        height: 1px;
+        background-color: white !important;
+      }
+
+      /* FOOTER BOTTOM */
+
+      .umf-footer-bottom {
+        text-align: center;
+        color: #d7d7d7;
+        font-size: 13px;
+        margin-top: 25px;
+      }
+
+      .umf-footer-bottom a {
+        color: #fff !important;
+        text-decoration: none;
+        margin: 0 15px;
+      }
+
+      /* RESPONSIVE */
+
+      @media (max-width: 991px) {
+        .umf-menu-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .umf-contact-row {
+          flex-direction: column;
+        }
+      }
+
+      .umf-footer-bg {
+        position: relative;
+        padding: 60px 50px;
+        border-radius: 20px;
+        overflow: hidden;
+
+        background:
+          linear-gradient(
+            #012060,
+            /* sesuaikan dengan warna fakultas */ rgba(11, 21, 41, 0.75)
+          ),
+          url("https://um.ac.id/wp-content/uploads/2026/03/9c1b5816c00d6e3cd04854792237040393f74333-scaled-e1776176101516.png")
+            center 100% / cover no-repeat !important;
+
+      }
+      .umf-footer-bg::before {
+        content: "";
+        position: absolute;
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      .umf-footer-bg .umf-elementor-container {
+        position: relative;
+        z-index: 2;
+      }
+
+      @media (max-width: 576px) {
+        .umf-menu-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .umf-top-card {
+          padding: 25px;
+        }
+
+        .umf-menu-card {
+          padding: 25px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <footer class="umf-footer-um">
+      <div class="umf-footer-container">
+        <!-- TOP INFO -->
+
+        <!-- MENU -->
+
+        <div class="umf-menu-card umf-footer-bg">
+          <div class="umf-menu-grid">
+            <div class="umf-menu-col">
+              <hr />
+
+              <a href="https://sekretariat.um.ac.id/"
+                >Sekretariat Universitas</a
+              >
+              <a href="https://wbs.um.ac.id/">Satgas PPKS</a>
+              <a href="https://spi.um.ac.id/">Badan Pengawas Internal</a>
+              <a href="https://bpm.um.ac.id/"
+                >Badan Pengembangan Usaha dan Dana Abadi</a
+              >
+              <a href="https://lp2m.um.ac.id/"
+                >Lembaga Penelitian dan Pengabdian Kepada Masyarakat</a
+              >
+              <a href="https://lppp.um.ac.id/"
+                >Lembaga Pengembangan Pendidikan dan Pengajaran</a
+              >
+            </div>
+
+            <div class="umf-menu-col">
+              <hr />
+
+              <a href="https://akademik.um.ac.id/">Direktorat Pendidikan</a>
+              <a href="https://kemahasiswaan.um.ac.id/"
+                >Direktorat Kemahasiswaan & Alumni</a
+              >
+              <a href="https://psdmk.um.ac.id/"
+                >Direktorat Sumber Daya Manusia & Keuangan</a
+              >
+              <a href="https://dspa.um.ac.id/"
+                >Direktorat Sarana, Prasarana, & Aset</a
+              >
+              <a href="https://inovasi.um.ac.id/">Direktorat Inovasi</a>
+              <a href="https://ppdh.um.ac.id/"
+                >Direktorat Perencanaan, Pemeringkatan, Data & Humas</a
+              >
+            </div>
+
+            <div class="umf-menu-col">
+              <hr />
+
+              <a href="https://lib.um.ac.id/">UPT Perpustakaan</a>
+              <a href="https://lab-pancasila.um.ac.id/"
+                >UPT Laboratorium Pancasila</a
+              >
+              <a href="https://ulpbj.um.ac.id/">UPT Layanan Pengadaan</a>
+              <a href="https://oia.um.ac.id/"
+                >UPT Kantor Urusan Internasional</a
+              >
+              <a href="https://lsp.um.ac.id/"
+                >UPT Lembaga Sertifikasi Profesi</a
+              >
+              <a href="https://psbbi.um.ac.id/"
+                >UPT Pusat Studi Bahasa dan Budaya Indonesia</a
+              >
+              <a href="https://integratedlab.um.ac.id/"
+                >UPT Laboratorium Terpadu</a
+              >
+            </div>
+
+            <div class="umf-menu-col">
+              <hr />
+
+              <a href="https://psl.um.ac.id/"
+                >UPT Pengelola Sekolah Laboratorium UM</a
+              >
+              <a href="https://pakb.um.ac.id/"
+                >UPT Pelaksana Akademik di Kampus Blitar</a
+              >
+              <a href="https://lpa.um.ac.id/"
+                >UPT Laboratorium Pendidikan Agama</a
+              >
+              <a href="https://publika.um.ac.id/">UPT Publikasi Ilmiah</a>
+              <a href="https://layanan-kesehatan.um.ac.id/"
+                >UPT Layanan Kesehatan</a
+              >
+              <a href="https://ptik.um.ac.id/"
+                >UPT Pusat Teknologi Informasi dan Komunikasi</a
+              >
+              <a href="https://bb.um.ac.id/">UPT Balai Bahasa</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- FOOTER -->
+      </div>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,625 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      .umsusnews-wrap {
+        --umsusnews-green-700: #012060;
+        --umsusnews-green-600: #012060;
+        --umsusnews-green-100: #eaf5ec;
+        --umsusnews-muted: #5c6b60;
+        --umsusnews-radius: 18px;
+        --umsusnews-font: "Albert Sans", Helvetica, Arial, sans-serif;
+
+        width: 100%;
+        font-family: var(--umsusnews-font);
+        box-sizing: border-box;
+      }
+      .umsusnews-wrap * {
+        box-sizing: border-box;
+      }
+
+      /* ===== Baris atas: 3 kolom dengan rasio 2fr : 1fr : 1fr =====
+     Kolom 1 (2fr) = kartu featured besar.
+     Kolom 2 & 3 (1fr masing-masing) = dua kartu secondary,
+     sekarang sejajar horizontal, bukan ditumpuk vertikal. */
+      .umsusnews-top {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 32px;
+        align-items: stretch;
+      }
+
+      /* ===== Kartu featured (besar, kiri) =====
+     Inset shadow navy #012060 khusus di kartu ini saja,
+     tidak diterapkan ke card lain (secondary/mini). */
+      .umsusnews-featured {
+        position: relative;
+        display: flex;
+        align-items: flex-end;
+        min-height: 420px;
+        border-radius: var(--umsusnews-radius);
+        background-size: cover;
+        background-position: center;
+        background-color: var(--umsusnews-green-100);
+        overflow: hidden;
+        text-decoration: none;
+        color: #ffffff;
+        isolation: isolate;
+        box-shadow:
+          inset 0 -180px 120px -40px #012060,
+          inset 0 0 0 9999px rgba(1, 32, 96, 0.12);
+      }
+
+      .umsusnews-featured::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          180deg,
+          rgba(1, 32, 96, 0.1) 0%,
+          rgba(1, 32, 96, 0.55) 55%,
+          rgba(1, 32, 96, 0.88) 100%
+        );
+        z-index: 0;
+      }
+
+      .umsusnews-badge {
+        position: absolute;
+        top: 24px;
+        left: 24px;
+        z-index: 2;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border-radius: 999px;
+        background: #ffffff;
+        color: var(--umsusnews-green-700);
+        font-size: 12px;
+        font-weight: 700;
+        transition:
+          background 180ms ease,
+          color 180ms ease;
+      }
+
+      /* Hover di kartu featured: badge berubah jadi navy solid + teks putih */
+      .umsusnews-featured:hover .umsusnews-badge {
+        background: #012060;
+        color: #ffffff;
+      }
+
+      .umsusnews-dot {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #012060;
+        display: inline-block;
+      }
+
+      .umsusnews-featured .umsusnews-badge .umsusnews-dot {
+        background: #012060;
+        transition: background 180ms ease;
+      }
+      .umsusnews-date:nth-child(1) {
+        margin: 22px 0;
+      }
+
+      .umsusnews-featured:hover .umsusnews-badge .umsusnews-dot {
+        background: #ffffff;
+      }
+
+      .umsusnews-featured-body {
+        position: relative;
+        z-index: 2;
+        padding: 32px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .umsusnews-featured-title {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 600;
+        color: white;
+        line-height: 1.18;
+        /* max-width: 34ch; */
+      }
+
+      /* display:contents supaya kedua .umsusnews-card di dalamnya jadi
+     item grid langsung dari .umsusnews-top (kolom 2 dan 3),
+     bukan lagi ditumpuk vertikal dalam satu kolom. */
+      .umsusnews-secondary {
+        display: contents;
+      }
+
+      .umsusnews-card {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        border-radius: var(--umsusnews-radius);
+        overflow: hidden;
+        /* background: #ffffff; */
+        text-decoration: none;
+        height: 100%;
+        min-height: 420px;
+        box-shadow: 0 1px 2px rgba(18, 51, 32, 0.06);
+        transition:
+          transform 180ms ease,
+          box-shadow 180ms ease,
+          background 180ms ease,
+          color 180ms ease;
+      }
+
+      /* Hover HANYA berlaku pada kartu yang di-hover (.umsusnews-card), bukan pada
+     container/parent-nya — jadi tidak ikut menyala serentak semua. */
+      .umsusnews-card:hover {
+        background: #1168db;
+        color: #ffffff;
+        box-shadow: 0 10px 24px rgba(18, 51, 32, 0.12);
+      }
+
+      /* icon dekoratif, tersembunyi normal, muncul samar pas card di-hover */
+      .umsusnews-card-icon {
+        position: absolute;
+        right: 0px;
+        bottom: 0px;
+        z-index: 1;
+        width: 64px;
+        height: 64px;
+        color: #ffffff;
+        opacity: 0;
+        /* transform: scale(0.85); */
+        pointer-events: none;
+        transition:
+          opacity 220ms ease,
+          transform 220ms ease;
+      }
+      .umsusnews-card:hover .umsusnews-card-icon {
+        opacity: 0.32;
+        /* transform: scale(1); */
+      }
+
+      .umsusnews-card-img {
+        aspect-ratio: 16/9;
+        background-size: cover;
+        background-position: center;
+        background-color: var(--umsusnews-green-100);
+      }
+
+      .umsusnews-card-body {
+        padding: 0px 26px;
+        display: flex;
+        flex-direction: column;
+        /* gap: 8px; */
+        flex: 1;
+      }
+
+      .umsusnews-card-title {
+        margin: 0;
+        padding-bottom: 0 0 18px 0;
+        color: #000;
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 1.35;
+      }
+
+      .umsusnews-date {
+        font-size: 14px;
+        font-weight: 400;
+        color: #012060;
+        margin: 26px 0;
+        padding: 0;
+      }
+      .umsusnews-date-bawah {
+        font-size: 12px;
+        font-weight: 400;
+        padding-left: 22px;
+        padding-top: 22px;
+
+        color: #012060;
+      }
+      .umsusnews-card:hover .umsusnews-date {
+        color: #ffffff;
+      }
+      .umsusnews-card:hover .umsusnews-card-title {
+        color: #ffffff;
+      }
+
+      .umsusnews-featured .umsusnews-date {
+        color: #ffffff;
+      }
+
+      .umsusnews-bottom {
+        margin-top: 20px;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr) 1.5fr;
+        gap: 32px;
+      }
+
+      .umsusnews-mini {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        overflow: hidden;
+        position: relative;
+        text-decoration: none;
+        border-radius: 4px;
+        padding-bottom: 32px;
+      }
+
+      .umsusnews-ring {
+        position: absolute;
+        bottom: -30px;
+        opacity: 0;
+        right: -30px;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        border: 10px solid #cfd8e3;
+        pointer-events: none;
+      }
+      .umsusnews-mini:hover .umsusnews-ring {
+        opacity: 1;
+      }
+
+      .umsusnews-mini-img {
+        aspect-ratio: 4/3;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+        background-size: cover;
+        background-position: center;
+        background-color: var(--umsusnews-green-100);
+        margin-bottom: 4px;
+      }
+
+      .umsusnews-mini-title {
+        margin: 0;
+        font-size: 16px;
+        padding-left: 22px;
+        font-weight: 500;
+        color: #000;
+        line-height: 1.35;
+        border-radius: 4px;
+        transition:
+          color 0.2s ease,
+          background-color 0.2s ease;
+      }
+
+      /* Scope ke ".umsusnews-mini:hover" (per kartu), bukan container-nya,
+     supaya hanya kartu yang di-hover yang berubah. */
+      .umsusnews-mini:hover {
+        color: #ffffff;
+        background-color: #1168db;
+      }
+
+      .umsusnews-mini:hover .umsusnews-mini-title {
+        color: #ffffff;
+      }
+      .umsusnews-mini:hover .umsusnews-date-bawah {
+        color: #ffffff;
+      }
+      .umsusnews-more {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+        padding: 18px;
+        border-radius: var(--umsusnews-radius);
+        background-image: url("https://um.ac.id/wp-content/uploads/2026/07/lihat-selengkapnya.webp");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        overflow: hidden;
+        text-decoration: none;
+        transition: color 180ms ease;
+      }
+
+      /* overlay gelap tipis supaya teks putih tetap kebaca di atas foto */
+      .umsusnews-more::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        /* background: linear-gradient(
+          180deg,
+          rgba(1, 32, 96, 0.55) 0%,
+          rgba(1, 32, 96, 0.25) 60%
+        ); */
+        /* background: linear-gradient(
+          180deg,
+          white 0%,
+          white 60%
+        ); */
+        z-index: 0;
+      }
+
+      .umsusnews-more:hover {
+        background-image: url("https://um.ac.id/wp-content/uploads/2026/07/lihat-selengkapnya-1.webp");
+        transition: all 0.3s ease;
+      }
+      .umsusnews-view-more {
+        color: #012060;
+        font-size: 22px;
+      }
+      .umsusnews-more:hover .umsusnews-view-more {
+        color: white;
+      }
+      .umsusnews-more span {
+        position: relative;
+        z-index: 1;
+      }
+
+      /* lingkaran ikon panah, nempel di pojok kanan bawah kartu */
+      .umsusnews-more-arrow {
+        z-index: 2;
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .umsusnews-more-arrow svg {
+        width: 22px;
+        height: 22px;
+        color: #012060;
+      }
+      .umsusnews-more:hover .umsusnews-more-arrow svg {
+        color: white;
+      }
+      .umsusnews-empty,
+      .umsusnews-loading {
+        width: min(100% - 48px, 1320px);
+        margin: 48px auto;
+        color: var(--umsusnews-muted);
+        font-family: var(--umsusnews-font);
+      }
+
+      .umsusnews-skeleton {
+        background: linear-gradient(
+          90deg,
+          var(--umsusnews-green-100) 25%,
+          #f6fbf7 37%,
+          var(--umsusnews-green-100) 63%
+        );
+        background-size: 400% 100%;
+        animation: umsusnews-shimmer 1.4s ease infinite;
+      }
+
+      @keyframes umsusnews-shimmer {
+        0% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0 50%;
+        }
+      }
+
+      @media (max-width: 1080px) {
+        .umsusnews-top {
+          grid-template-columns: 1fr;
+        }
+        /* Di layar sempit, kembalikan 2 kartu secondary jadi flex row
+       berdampingan di bawah kartu featured (bukan grid column lagi). */
+        .umsusnews-secondary {
+          display: flex;
+          flex-direction: row;
+          gap: 20px;
+        }
+        .umsusnews-bottom {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .umsusnews-more {
+          grid-column: span 2;
+        }
+      }
+
+      @media (max-width: 680px) {
+        .umsusnews-secondary {
+          flex-direction: column;
+        }
+        .umsusnews-bottom {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .umsusnews-more {
+          grid-column: span 2;
+        }
+        .umsusnews-featured {
+          min-height: 320px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="umsusnews-root" class="umsusnews-wrap">
+      <p class="umsusnews-loading">Memuat berita…</p>
+    </div>
+
+    <script>
+      (function () {
+        // ====== KONFIGURASI ======
+        var FEED_URL =
+          "https://sustainability.um.ac.id/wp-json/wp/v2/posts?per_page=7&_embed=wp:featuredmedia&orderby=date&order=desc&lang=id";
+        var ARCHIVE_URL = "https://sustainability.um.ac.id/";
+        // ==========================
+
+        var root = document.getElementById("umsusnews-root");
+
+        function escapeHtml(str) {
+          var div = document.createElement("div");
+          div.textContent = str || "";
+          return div.innerHTML;
+        }
+
+        function formatDate(iso) {
+          if (!iso) return "";
+          var d = new Date(iso);
+          var bulan = [
+            "Januari",
+            "Februari",
+            "Maret",
+            "April",
+            "Mei",
+            "Juni",
+            "Juli",
+            "Agustus",
+            "September",
+            "Oktober",
+            "November",
+            "Desember",
+          ];
+          return (
+            d.getDate() + " " + bulan[d.getMonth()] + " " + d.getFullYear()
+          );
+        }
+
+        function trimWords(str, n) {
+          var words = (str || "").trim().split(/\s+/);
+          if (words.length <= n) return str;
+          return words.slice(0, n).join(" ") + "…";
+        }
+
+        function pickImage(post) {
+          try {
+            var media = post._embedded["wp:featuredmedia"][0];
+            var sizes = media.media_details && media.media_details.sizes;
+            if (sizes && sizes.medium_large)
+              return sizes.medium_large.source_url;
+            if (sizes && sizes.large) return sizes.large.source_url;
+            return media.source_url;
+          } catch (e) {
+            return "";
+          }
+        }
+        function normalize(posts) {
+          return posts.map(function (post) {
+            return {
+              title: escapeHtml(
+                (post.title && post.title.rendered) || "",
+              ).replace(/&/g, "&"),
+              link: post.link || "#",
+              date: formatDate(post.date),
+              image: pickImage(post) || "",
+            };
+          });
+        }
+
+        function render(items) {
+          if (!items || !items.length) {
+            root.innerHTML =
+              '<p class="umsusnews-empty">Berita belum dapat dimuat saat ini.</p>';
+            return;
+          }
+
+          var featured = items[0];
+          var secondary = items.slice(1, 3);
+          var small = items.slice(3, 7);
+
+          var html = '<div class="umsusnews-top">';
+
+          html +=
+            '<a class="umsusnews-featured" href="' +
+            featured.link +
+            '" style="background-image:url(\'' +
+            featured.image +
+            "')\">" +
+            "" +
+            '<div class="umsusnews-featured-body">' +
+            '<p class="umsusnews-featured-title">' +
+            featured.title +
+            "</p>" +
+            '<span class="umsusnews-date">' +
+            featured.date +
+            "</span>" +
+            "</div></a>";
+
+          html += '<div class="umsusnews-secondary">';
+          secondary.forEach(function (item) {
+            html +=
+              '<a class="umsusnews-card" href="' +
+              item.link +
+              '">' +
+              '<div class="umsusnews-card-img" style="background-image:url(\'' +
+              item.image +
+              "')\"></div>" +
+              '<div class="umsusnews-card-body">' +
+              '<span class="umsusnews-date">' +
+              item.date +
+              "</span>" +
+              '<p class="umsusnews-card-title">' +
+              item.title +
+              "</p>" +
+              "</div>" +
+              '<svg class="umsusnews-card-icon" viewBox="0 0 67 68" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+              '<path d="M33.4951 18.4135C31.7251 18.4135 30.262 19.8589 30.5676 21.6023C30.7989 22.9223 31.1738 24.216 31.6874 25.4601C32.6098 27.6941 33.9619 29.724 35.6663 31.4338C37.3707 33.1437 39.3941 34.5 41.621 35.4254C42.8548 35.9381 44.1377 36.3129 45.4465 36.5453C47.1948 36.8557 48.6451 35.3876 48.6451 33.612C48.6451 31.8363 47.1803 30.439 45.4689 29.9655C44.9955 29.8345 44.5295 29.674 44.0739 29.4847C42.6246 28.8825 41.3078 27.9998 40.1986 26.887C39.0894 25.7743 38.2095 24.4532 37.6092 22.9993C37.4179 22.5361 37.2562 22.0622 37.1247 21.5806C36.6583 19.8731 35.2651 18.4135 33.4951 18.4135Z" fill="currentColor" />' +
+              '<path d="M33.4951 48.8248C31.7251 48.8248 30.262 47.3794 30.5676 45.6359C30.7989 44.316 31.1738 43.0223 31.6874 41.7782C32.6098 39.5442 33.9619 37.5143 35.6663 35.8044C37.3707 34.0946 39.3941 32.7382 41.621 31.8129C42.8548 31.3002 44.1377 30.9253 45.4465 30.693C47.1948 30.3826 48.6451 31.8507 48.6451 33.6263C48.6451 35.402 47.1803 36.7993 45.4689 37.2728C44.9955 37.4038 44.5295 37.5643 44.0739 37.7536C42.6246 38.3558 41.3078 39.2385 40.1986 40.3513C39.0894 41.464 38.2095 42.785 37.6092 44.2389C37.4179 44.7022 37.2562 45.1761 37.1247 45.6577C36.6583 47.3652 35.2651 48.8248 33.4951 48.8248Z" fill="currentColor" />' +
+              '<path d="M33.5049 18.4135C35.2749 18.4135 36.738 19.8589 36.4324 21.6023C36.2011 22.9223 35.8262 24.216 35.3126 25.4601C34.3902 27.6941 33.0381 29.724 31.3337 31.4338C29.6293 33.1437 27.6059 34.5 25.379 35.4254C24.1452 35.9381 22.8623 36.3129 21.5535 36.5453C19.8052 36.8557 18.3549 35.3876 18.3549 33.612C18.3549 31.8363 19.8197 30.439 21.5311 29.9655C22.0045 29.8345 22.4705 29.674 22.9261 29.4847C24.3754 28.8825 25.6922 27.9998 26.8014 26.887C27.9106 25.7743 28.7905 24.4532 29.3908 22.9993C29.5821 22.5361 29.7438 22.0622 29.8753 21.5806C30.3417 19.8731 31.7349 18.4135 33.5049 18.4135Z" fill="currentColor" />' +
+              '<path d="M33.5049 48.8228C35.2749 48.8228 36.738 47.3774 36.4324 45.634C36.2011 44.3141 35.8262 43.0203 35.3126 41.7763C34.3902 39.5422 33.0381 37.5123 31.3337 35.8025C29.6293 34.0926 27.6059 32.7363 25.379 31.8109C24.1452 31.2982 22.8623 30.9234 21.5535 30.691C19.8052 30.3806 18.3549 31.8487 18.3549 33.6244C18.3549 35.4 19.8197 36.7973 21.5311 37.2709C22.0045 37.4019 22.4705 37.5623 22.9261 37.7516C24.3754 38.3539 25.6922 39.2366 26.8014 40.3493C27.9106 41.4621 28.7905 42.7831 29.3908 44.237C29.5821 44.7003 29.7438 45.1742 29.8753 45.6558C30.3417 47.3632 31.7349 48.8228 33.5049 48.8228Z" fill="currentColor" />' +
+              "</svg>" +
+              "</a>";
+          });
+          html += "</div></div>";
+
+          html += '<div class="umsusnews-bottom">';
+          small.forEach(function (item) {
+            html +=
+              '<a class="umsusnews-mini" href="' +
+              item.link +
+              '">' +
+              '<div class="umsusnews-mini-img" style="background-image:url(\'' +
+              item.image +
+              "')\"></div>" +
+              '<span class="umsusnews-date-bawah">' +
+              item.date +
+              "</span>" +
+              '<p class="umsusnews-mini-title">' +
+              trimWords(item.title, 6) +
+              "</p>" +
+              '<span class="umsusnews-ring" aria-hidden="true"></span>' +
+              "</a>";
+          });
+          html +=
+            '<a class="umsusnews-more" href="' +
+            ARCHIVE_URL +
+            '">' +
+            "<span class='umsusnews-view-more'>Lihat Berita <br> Selengkapnya</span>" +
+            '<span class="umsusnews-more-arrow">' +
+            '<svg width="13" height="17" viewBox="0 0 13 17" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+            '<g clip-path="url(#clip0_umsusnews_more_arrow)">' +
+            '<path d="M3.11637 0.802671C2.17409 0.802671 1.39519 1.57215 1.55787 2.50028C1.68102 3.20295 1.88058 3.89171 2.15403 4.55399C2.64509 5.74331 3.36485 6.82395 4.27221 7.73421C5.17958 8.64447 6.25677 9.36653 7.4423 9.85916C8.09914 10.1321 8.78211 10.3317 9.47886 10.4554C10.4096 10.6206 11.1817 9.83904 11.1817 8.89375C11.1817 7.94846 10.4018 7.20459 9.49079 6.9525C9.23874 6.88275 8.99069 6.79734 8.74813 6.69654C7.9766 6.37594 7.27557 5.90603 6.68507 5.31365C6.09456 4.72126 5.62615 4.01799 5.30657 3.24399C5.20474 2.99735 5.11865 2.74507 5.04862 2.48868C4.80032 1.57971 4.05865 0.802671 3.11637 0.802671Z" fill="currentColor" />' +
+            '<path d="M3.11637 16.9923C2.17409 16.9923 1.39519 16.2228 1.55787 15.2946C1.68102 14.592 1.88058 13.9032 2.15403 13.2409C2.64509 12.0516 3.36485 10.971 4.27221 10.0607C5.17958 9.15045 6.25677 8.42839 7.4423 7.93576C8.09914 7.66282 8.78211 7.46327 9.47886 7.33957C10.4096 7.17433 11.1817 7.95589 11.1817 8.90117C11.1817 9.84646 10.4018 10.5903 9.49079 10.8424C9.23874 10.9122 8.99069 10.9976 8.74813 11.0984C7.9766 11.419 7.27557 11.8889 6.68507 12.4813C6.09456 13.0737 5.62615 13.7769 5.30657 14.5509C5.20474 14.7976 5.11865 15.0498 5.04862 15.3062C4.80032 16.2152 4.05865 16.9923 3.11637 16.9923Z" fill="currentColor" />' +
+            '<path d="M2.96094 2.31641L2.96094 15.3407" stroke="currentColor" stroke-width="3.04501" stroke-linecap="round" />' +
+            "</g>" +
+            '<defs><clipPath id="clip0_umsusnews_more_arrow"><rect width="13" height="17" fill="white" /></clipPath></defs>' +
+            "</svg>" +
+            "</span>" +
+            "</a>";
+          html += "</div>";
+
+          root.innerHTML = html;
+        }
+
+
+        fetch(FEED_URL, { headers: { Accept: "application/json" } })
+          .then(function (res) {
+            if (!res.ok)
+              throw new Error("Gagal memuat berita (" + res.status + ")");
+            return res.json();
+          })
+          .then(function (posts) {
+            var items = normalize(posts);
+            render(items);
+          })
+          .catch(function (err) {
+            root.innerHTML =
+              '<p class="umsusnews-empty">Berita belum dapat dimuat saat ini.</p>';
+            console.error("UM Sustainability News:", err);
+          });
+      })();
+    </script>
+  </body>
+</html>

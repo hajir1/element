@@ -1,0 +1,69 @@
+<div class="unm-footer">
+  <div class="unm-footer__inner">
+    <p class="unm-footer__copy">© 2026 Universitas Negeri Malang</p>
+    <div class="unm-footer__links">
+      <a href="#">Kebijakan Privasi</a>
+      <a href="#">Syarat Penggunaan</a>
+      <a href="#">Peta Situs</a>
+    </div>
+  </div>
+</div>
+
+<style>
+  .unm-footer__inner {
+    margin: 0 auto;
+    display: flex;
+    background-color: #00153F;
+    align-items: center;
+    border-radius: 999px;
+    justify-content: space-evenly; /* rata kiri di desktop */
+    gap: 40px;
+    padding: 14px 32px;
+  }
+
+  .unm-footer__copy {
+    font-size: 16px;
+    color: #fff;
+    white-space: nowrap;
+    margin: 0;
+  }
+
+  .unm-footer__links {
+    display: flex;
+    gap: 28px;
+    align-items: center;
+  }
+
+  .unm-footer__links a {
+    color: #ffffff !important;
+    text-decoration: none !important;
+    font-size: 16px;
+  }
+
+  .unm-footer__links a:hover {
+    text-decoration: underline !important;
+  }
+
+  /* Mode HP: tanpa background, susun ke bawah (column) */
+  @media (max-width: 640px) {
+    .unm-footer__inner {
+      background: none;
+      border-radius: 0;
+      color: #fff;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px 20px;
+    }
+
+    .unm-footer__links {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .unm-footer__copy {
+      white-space: normal;
+    }
+  }
+</style>
